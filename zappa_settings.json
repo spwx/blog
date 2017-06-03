@@ -5,7 +5,7 @@
         "aws_region": "us-east-1",
         "profile_name": "default",
         "s3_bucket": "zappa-rds",
-        "domain": "testing.wall.ninja",
+        "domain": "dev.wall.ninja",
         "certificate_arn": "arn:aws:acm:us-east-1:057337601159:certificate/dd823c2e-bfa0-47c1-8d61-390d015724c6",
         "environment_variables": {
             "MODE": "awsdev"
