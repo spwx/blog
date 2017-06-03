@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Blog</title>
+    </head>
+    <body>
+
+        <div class="container">
+            <h1>Index</h1>
+            <p class="important">
+              Welcome to my awesome homepage.
+            </p>
+
+          <p>Hello template!</p>
+
+          <ul class="items">
+            {% for item in paginated.items %}
+              <li>{{ item.title }}</li>
+            {% endfor %}
+          </ul>
+
+          <div class=pagination>
+            {%- for page in paginated.iter_pages() %}
+            {% if page %}
+              {% if page != paginated.page %}
+              <a href="{{ url_for('blog.home', page=page) }}">{{ page }}</a>
+              {% else %}
+              <strong>{{ page }}</strong>
+              {% endif %}
+            {% else %}
+              <span class=ellipsis>...</span>
+            {% endif %}
+            {%- endfor %}
+          </div>
+
+        </div>
+
+    </body>
+</html>
