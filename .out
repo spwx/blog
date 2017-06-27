@@ -1,0 +1,5 @@
+# for use with zpm-zsh/autoenv
+
+unset FLASK_APP
+unset FLASK_DEBUG
+deactivate

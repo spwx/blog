@@ -1,11 +1,15 @@
 from flask import Flask
 from werkzeug.utils import find_modules, import_string
 
-from .extensions import db
+from .extensions import db, s3
 
 
 def register_extensions(app):
+    # dict([(name, cls) for name, cls in mod.__dict__.items()
+    #     if isinstance(cls, type)])
+
     db.init_app(app)
+    s3.init_app(app)
 
 
 def register_blueprints(app):

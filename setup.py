@@ -15,5 +15,8 @@ setup(
         'flask-sqlalchemy',
         'psycopg2',
         'faker',
+        'flask-s3',
+        'pygments',
+        'docutils',
     ],
 )

@@ -1,9 +1,24 @@
 import click
+
+import flask_s3
+
 from .app import create_app
 from .extensions import db
 
 
 app = create_app()
+
+
+@app.cli.command()
+def s3():
+    """ Gather and upload static files to AWS S3"""
+    app.config.update(
+        FLASKS3_BUCKET_NAME='dev-cdn.wall.ninja',
+        FLASKS3_FORCE_MIMETYPE=True,
+        FLASKS3_USE_HTTPS=False,
+    )
+
+    flask_s3.create_all(app)
 
 
 @app.cli.command()
@@ -25,7 +40,7 @@ def resetdb():
 def fake_blogs():
     """ Generate fake blog posts. """
     from faker import Faker
-    from .blueprints.blog.models import Blog
+    from app.blueprints.blog.models import Blog
 
     fake = Faker()
 
@@ -34,6 +49,7 @@ def fake_blogs():
         db.session.add(entry)
 
     db.session.commit()
+    click.echo('Created fake blog entries.')
 
 
 @app.cli.command()

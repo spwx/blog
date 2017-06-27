@@ -1,14 +1,19 @@
 {
     "dev": {
-        "project_name": "test-zappa-rds",
+        "project_name": "wall-ninja",
         "app_function": "app.devapp.app",
         "aws_region": "us-east-1",
         "profile_name": "default",
-        "s3_bucket": "zappa-rds",
+        "s3_bucket": "dev.wall.ninja",
         "domain": "dev.wall.ninja",
-        "certificate_arn": "arn:aws:acm:us-east-1:057337601159:certificate/dd823c2e-bfa0-47c1-8d61-390d015724c6",
+        "certificate_arn": "arn:aws:acm:us-east-1:057337601159:certificate/19f9a59e-b34c-440f-b747-7ff2e44384ed",
         "environment_variables": {
-            "MODE": "awsdev"
+            "MODE": "dev",
+            "FLASK_APP": "app.devapp:app"
+        },
+        "vpc_config": {
+            "SubnetIds": [ "subnet-be4bee92" ],
+            "SecurityGroupIds": [ "sg-4fc6c431" ]
         }
     }
 }
