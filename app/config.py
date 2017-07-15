@@ -10,5 +10,4 @@ if mode == 'dev':
     FLASKS3_FORCE_MIMETYPE = True
     FLASKS3_URL_STYLE = 'path'
 else:
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
-    SQLALCHEMY_DATABASE_URI = 'postgresql://localdb:localdb@localhost:5432/localdb'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DBSTRING')

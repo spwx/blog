@@ -2,4 +2,6 @@
 
 unset FLASK_APP
 unset FLASK_DEBUG
+unset DBSTRING
+
 deactivate
