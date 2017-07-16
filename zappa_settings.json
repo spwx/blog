@@ -9,7 +9,8 @@
         "certificate_arn": "arn:aws:acm:us-east-1:057337601159:certificate/19f9a59e-b34c-440f-b747-7ff2e44384ed",
         "environment_variables": {
             "MODE": "dev",
-            "FLASK_APP": "app.devapp:app"
+            "FLASK_APP": "app.devapp:app",
+            "DBSTRING": "postgresql://blogdb:blogdb123@blogdb.cqxklygxzkdp.us-east-1.rds.amazonaws.com:5432/blogdb"
         },
         "vpc_config": {
             "SubnetIds": [ "subnet-be4bee92" ],
