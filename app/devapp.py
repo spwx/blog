@@ -3,7 +3,7 @@ import click
 import flask_s3
 
 from .app import create_app
-from .extensions import db
+from .extensions import db as database
 
 
 app = create_app()
@@ -19,37 +19,6 @@ def s3():
     )
 
     flask_s3.create_all(app)
-
-
-@app.cli.command()
-def initdb():
-    """ Initialize the database """
-    db.create_all()
-    click.echo('Added tables to the database.')
-
-
-@app.cli.command()
-def resetdb():
-    """ Reset the database """
-    db.drop_all()
-    db.create_all()
-    click.echo('Reset the database.')
-
-
-@app.cli.command()
-def fake_blogs():
-    """ Generate fake blog posts. """
-    from faker import Faker
-    from app.blueprints.blog.models import Blog
-
-    fake = Faker()
-
-    for x in range(100):
-        entry = Blog(fake.sentence(), fake.text())
-        db.session.add(entry)
-
-    db.session.commit()
-    click.echo('Created fake blog entries.')
 
 
 @app.cli.command()
@@ -75,3 +44,41 @@ def routes():
         if 'debugtoolbar' not in key and 'debug_toolbar' not in key:
             click.echo('{0: >{1}}: {2}'.format(key, endpoint_padding,
                                                output[key]))
+
+
+# Database commands
+@app.cli.group()
+def db():
+    """ Commands to modify the database """
+    pass
+
+
+@db.command()
+def init():
+    """ Initialize the database """
+    database.create_all()
+    click.echo('Added tables to the database.')
+
+
+@db.command()
+def reset():
+    """ Reset the database """
+    database.drop_all()
+    database.create_all()
+    click.echo('Reset the database.')
+
+
+@db.command()
+def fake():
+    """ Generate fake blog posts """
+    from faker import Faker
+    from app.blueprints.blog.models import Blog
+
+    fake = Faker()
+
+    for x in range(100):
+        entry = Blog(fake.sentence(), fake.text())
+        database.session.add(entry)
+
+    database.session.commit()
+    click.echo('Created fake blog entries.')
