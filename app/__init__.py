@@ -1,1 +1,1 @@
-import app.devapp
+import app.cli
