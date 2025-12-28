@@ -1,3 +1,11 @@
+// Set current year in footer
+document.addEventListener('DOMContentLoaded', function() {
+    const yearSpan = document.getElementById('current-year');
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
+});
+
 // Add copy buttons to code blocks
 document.addEventListener('DOMContentLoaded', function() {
     const codeBlocks = document.querySelectorAll('.post-content pre.code');
