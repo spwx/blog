@@ -499,7 +499,7 @@ article .date {
 /* Header Search Form */
 .header-search-form {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 6px;
 }
 
