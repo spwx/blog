@@ -28,11 +28,12 @@
     <p>Search results for "<strong>{{ query }}</strong>":</p>
   </div>
 
-  <ul class="post-list">
-    {% for post in results %}
+  <ul class="post-list search-results">
+    {% for result in results %}
     <li>
-      <a href="/post/{{ post.slug }}">{{ post.title }}</a>
-      <span class="date">{{ post.date }}</span>
+      <a href="/post/{{ result.post.slug }}" class="search-result-title">{{ result.post.title }}</a>
+      <span class="date">{{ result.post.date }}</span>
+      <p class="search-excerpt">{{ result.excerpt }}</p>
     </li>
     {% else %}
     <li style="border: none;">

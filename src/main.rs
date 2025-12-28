@@ -11,8 +11,9 @@ use orgize::{
     export::{DefaultHtmlHandler, HtmlHandler},
     Element, Event, Org,
 };
-use serde::Deserialize;
+use regex::Regex;
 use rust_embed::RustEmbed;
+use serde::Deserialize;
 use std::{collections::HashMap, io::Write, sync::Arc};
 use syntect::{
     html::ClassedHTMLGenerator,
@@ -115,11 +116,69 @@ struct SearchQuery {
     q: Option<String>,
 }
 
+#[derive(Clone)]
+struct SearchResult {
+    post: Post,
+    excerpt: String,
+}
+
 #[derive(Template)]
 #[template(path = "search.html")]
 struct SearchTemplate {
     query: String,
-    results: Vec<Post>,
+    results: Vec<SearchResult>,
+}
+
+fn strip_html_tags(html: &str) -> String {
+    let tag_regex = Regex::new(r"<[^>]*>").unwrap();
+    let without_tags = tag_regex.replace_all(html, " ");
+    let whitespace_regex = Regex::new(r"\s+").unwrap();
+    whitespace_regex.replace_all(&without_tags, " ").trim().to_string()
+}
+
+fn generate_excerpt(content: &str, query: &str, max_length: usize) -> String {
+    let text = strip_html_tags(content);
+    let query_lower = query.to_lowercase();
+    let text_lower = text.to_lowercase();
+
+    if let Some(pos) = text_lower.find(&query_lower) {
+        let start = if pos > 60 {
+            // Find word boundary before the match
+            text[..pos].rfind(' ').map(|i| i + 1).unwrap_or(0)
+        } else {
+            0
+        };
+
+        let end = (start + max_length).min(text.len());
+        let end = if end < text.len() {
+            // Find word boundary after max_length
+            text[start..end].rfind(' ').map(|i| start + i).unwrap_or(end)
+        } else {
+            end
+        };
+
+        let mut excerpt = text[start..end].to_string();
+        if start > 0 {
+            excerpt = format!("...{}", excerpt);
+        }
+        if end < text.len() {
+            excerpt = format!("{}...", excerpt);
+        }
+        excerpt
+    } else {
+        // If no match found, return beginning of text
+        let end = max_length.min(text.len());
+        let end = if end < text.len() {
+            text[..end].rfind(' ').unwrap_or(end)
+        } else {
+            end
+        };
+        let mut excerpt = text[..end].to_string();
+        if end < text.len() {
+            excerpt = format!("{}...", excerpt);
+        }
+        excerpt
+    }
 }
 
 async fn index(State(state): State<Arc<AppState>>) -> impl IntoResponse {
@@ -147,7 +206,7 @@ async fn search(
 ) -> impl IntoResponse {
     let query = params.q.unwrap_or_default().trim().to_string();
 
-    let mut results: Vec<Post> = if query.is_empty() {
+    let mut results: Vec<SearchResult> = if query.is_empty() {
         Vec::new()
     } else {
         let query_lower = query.to_lowercase();
@@ -158,12 +217,24 @@ async fn search(
                 post.title.to_lowercase().contains(&query_lower)
                     || post.content.to_lowercase().contains(&query_lower)
             })
-            .cloned()
+            .map(|post| {
+                let excerpt = if post.title.to_lowercase().contains(&query_lower) {
+                    // If title matches, show beginning of content
+                    generate_excerpt(&post.content, "", 200)
+                } else {
+                    // If content matches, show context around match
+                    generate_excerpt(&post.content, &query, 200)
+                };
+                SearchResult {
+                    post: post.clone(),
+                    excerpt,
+                }
+            })
             .collect()
     };
 
     // Sort results by date (newest first)
-    results.sort_by(|a, b| b.date.cmp(&a.date));
+    results.sort_by(|a, b| b.post.date.cmp(&a.post.date));
 
     SearchTemplate { query, results }
 }
