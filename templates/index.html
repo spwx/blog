@@ -3,6 +3,16 @@
 {% block title %}Sean's Blog - Home{% endblock %}
 
 {% block content %}
+<form action="/search" method="get" class="search-form">
+    <input
+        type="search"
+        name="q"
+        placeholder="Search posts..."
+        class="search-input"
+    >
+    <button type="submit" class="search-button">Search</button>
+</form>
+
 <h2>Posts</h2>
 <ul class="post-list">
     {% for post in posts %}

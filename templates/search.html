@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if query != "" %}
+    Search: {{ query }} - Sean's Blog
+  {% else %}
+    Search - Sean's Blog
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>Search Posts</h2>
+
+<form action="/search" method="get" class="search-form">
+    <input
+        type="search"
+        name="q"
+        value="{{ query }}"
+        placeholder="Search posts..."
+        class="search-input"
+        autofocus
+    >
+    <button type="submit" class="search-button">Search</button>
+</form>
+
+{% if query != "" %}
+  <div class="search-results-info">
+    <p>Search results for "<strong>{{ query }}</strong>":</p>
+  </div>
+
+  <ul class="post-list">
+    {% for post in results %}
+    <li>
+      <a href="/post/{{ post.slug }}">{{ post.title }}</a>
+      <span class="date">{{ post.date }}</span>
+    </li>
+    {% else %}
+    <li style="border: none;">
+      <p>No posts found.</p>
+    </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<a href="/" class="back-link">← Back to all posts</a>
+{% endblock %}

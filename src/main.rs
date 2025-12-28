@@ -1,6 +1,6 @@
 use askama::Template;
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     http::StatusCode,
     response::{IntoResponse, Response},
     routing::get,
@@ -11,6 +11,7 @@ use orgize::{
     export::{DefaultHtmlHandler, HtmlHandler},
     Element, Event, Org,
 };
+use serde::Deserialize;
 use rust_embed::RustEmbed;
 use std::{collections::HashMap, io::Write, sync::Arc};
 use syntect::{
@@ -109,6 +110,18 @@ struct PostTemplate {
     post: Post,
 }
 
+#[derive(Deserialize)]
+struct SearchQuery {
+    q: Option<String>,
+}
+
+#[derive(Template)]
+#[template(path = "search.html")]
+struct SearchTemplate {
+    query: String,
+    results: Vec<Post>,
+}
+
 async fn index(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     let mut posts: Vec<Post> = state.posts.values().cloned().collect();
     posts.sort_by(|a, b| b.date.cmp(&a.date));
@@ -126,6 +139,33 @@ async fn post(
         .cloned()
         .map(|post| PostTemplate { post })
         .ok_or(StatusCode::NOT_FOUND)
+}
+
+async fn search(
+    State(state): State<Arc<AppState>>,
+    Query(params): Query<SearchQuery>,
+) -> impl IntoResponse {
+    let query = params.q.unwrap_or_default().trim().to_string();
+
+    let mut results: Vec<Post> = if query.is_empty() {
+        Vec::new()
+    } else {
+        let query_lower = query.to_lowercase();
+        state
+            .posts
+            .values()
+            .filter(|post| {
+                post.title.to_lowercase().contains(&query_lower)
+                    || post.content.to_lowercase().contains(&query_lower)
+            })
+            .cloned()
+            .collect()
+    };
+
+    // Sort results by date (newest first)
+    results.sort_by(|a, b| b.date.cmp(&a.date));
+
+    SearchTemplate { query, results }
 }
 
 async fn serve_static(Path(path): Path<String>) -> Response {
@@ -198,6 +238,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(index))
+        .route("/search", get(search))
         .route("/post/:slug", get(post))
         .route("/static/*path", get(serve_static))
         .with_state(state);
