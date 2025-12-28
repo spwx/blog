@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Sean's Blog{% endblock %}
+
+{% block content %}
+<article>
+    <h2>{{ post.title }}</h2>
+    <p class="date">{{ post.date }}</p>
+    <div class="post-content">
+        {{ post.content|safe }}
+    </div>
+</article>
+<a href="/" class="back-link">&larr; Back to all posts</a>
+{% endblock %}

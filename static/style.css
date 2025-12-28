@@ -1,0 +1,303 @@
+/*
+ * Sean's Blog Stylesheet
+ *
+ * Color Scheme: ef-maris-dark by Protesilaos Stavrou
+ * - Repository: https://github.com/protesilaos/ef-themes
+ * - License: GNU GPL v3.0
+ * - A marine-inspired dark theme with blues, cyans, and greens
+ *
+ * Fonts:
+ * - Farro (headings) - SIL Open Font License
+ * - JetBrains Mono (code) - SIL Open Font License
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Farro:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 20px;
+    line-height: 1.6;
+    color: #eaedef;
+    background-color: #131c2b;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #2a3644;
+}
+
+header h1 {
+    font-family: 'Farro', sans-serif;
+    font-weight: 400;
+    font-size: 2.5rem;
+}
+
+header h1 a {
+    color: #eaedef;
+    text-decoration: none;
+}
+
+header h1 a:hover {
+    color: #57b0ff;
+}
+
+main {
+    margin-bottom: 40px;
+}
+
+footer {
+    padding-top: 20px;
+    border-top: 1px solid #2a3644;
+    color: #969faf;
+    font-size: 1em;
+}
+
+.post-list {
+    list-style: none;
+}
+
+.post-list li {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #2a3644;
+}
+
+.post-list li:last-child {
+    border-bottom: none;
+}
+
+.post-list a {
+    font-size: 1.4em;
+    color: #57b0ff;
+    text-decoration: none;
+}
+
+.post-list a:hover {
+    text-decoration: underline;
+}
+
+.date {
+    display: block;
+    color: #969faf;
+    font-size: 1em;
+    margin-top: 5px;
+}
+
+article h2 {
+    margin-bottom: 10px;
+    font-size: 3rem;
+    font-family: 'Farro', sans-serif;
+    font-weight: 400;
+    color: #57b0ff;
+    line-height: 1.2;
+}
+
+article .date {
+    margin-bottom: 30px;
+}
+
+.post-content {
+    margin-top: 20px;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+    font-family: 'Farro', sans-serif;
+    font-weight: 400;
+    line-height: 1.3;
+}
+
+/* Org-mode rainbow heading colors with proportional spacing */
+.post-content h1 {
+    color: #30c489;
+    font-size: 2.2rem;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.post-content h2 {
+    color: #70a0ff;
+    font-size: 1.8rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.post-content h3 {
+    color: #7fce5f;
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.post-content h4 {
+    color: #2fd0db;
+    font-size: 1.3rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.875rem;
+}
+
+.post-content h5 {
+    color: #cf90ff;
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.post-content h6 {
+    color: #12b4ff;
+    font-size: 1rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.625rem;
+}
+
+.post-content p {
+    margin-bottom: 1.25rem;
+}
+
+.post-content a {
+    color: #57b0ff;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    transition: color 0.2s ease;
+}
+
+.post-content a:hover {
+    color: #2fd0db;
+}
+
+/* Code block wrapper for copy button */
+.code-block-wrapper {
+    position: relative;
+    margin: 2rem 0;
+}
+
+.post-content pre.code {
+    background-color: #1d2c39;
+    padding: 1.25rem;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 0;
+}
+
+.copy-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.5rem;
+    background-color: #2a3644;
+    color: #969faf;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    opacity: 0.7;
+}
+
+.copy-button:hover {
+    background-color: #57b0ff;
+    color: #131c2b;
+    opacity: 1;
+}
+
+.copy-button svg {
+    display: block;
+    width: 16px;
+    height: 16px;
+}
+
+.copy-button.copied {
+    background-color: #30c489;
+    color: #131c2b;
+    opacity: 1;
+}
+
+.post-content code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1em;
+    color: #cf90ff;
+}
+
+.post-content ul,
+.post-content ol {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.post-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Table styling */
+.post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    background-color: #1d2c39;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.post-content table thead {
+    background-color: #2a3644;
+}
+
+.post-content table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #70a0ff;
+    border-bottom: 2px solid #57b0ff;
+}
+
+.post-content table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #2a3644;
+}
+
+.post-content table tbody tr:hover {
+    background-color: #243242;
+}
+
+.post-content table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 30px;
+    color: #57b0ff;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Syntax highlighting classes */
+.source { color: #eaedef; }
+.comment { color: #eaa4a4; font-style: italic; }
+.keyword { color: #70a0ff; font-weight: bold; }
+.string { color: #30c489; }
+.number { color: #12b4ff; }
+.function { color: #7fce5f; }
+.type { color: #41bf4f; }
+.variable { color: #2fd0db; }

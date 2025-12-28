@@ -1,0 +1,52 @@
+#+TITLE: Getting Started with Org-Mode Blogging
+#+DATE: 2025-01-20
+
+* Why Org-Mode?
+
+Org-mode is a powerful markup language that's perfect for technical writing. It supports:
+
+1. Headings and structure
+2. Lists (ordered and unordered)
+3. Code blocks with syntax highlighting
+4. Links, emphasis, and more
+
+* Writing Posts
+
+Simply create a new =.org= file in the =content/posts/= directory with the following frontmatter:
+
+#+BEGIN_SRC org
+#+TITLE: Your Post Title
+#+DATE: 2025-01-20
+
+Your content here...
+#+END_SRC
+
+** Syntax Highlighting
+
+The blog engine uses syntect for beautiful syntax highlighting. Here's a Python example:
+
+#+BEGIN_SRC python
+def greet(name):
+    """Greet someone by name."""
+    return f"Hello, {name}!"
+
+if __name__ == "__main__":
+    print(greet("World"))
+#+END_SRC
+
+* Next Steps
+
+Try adding your own posts and customizing the CSS to match your style!
+
+=more= ~stuff~
+
+https://google.com
+
+[[https://amazon.com][Amazon]]
+
+[[https://fjdslkfjalsk.com][fjdlkfja;lsjf]]
+
+| Header 1 | Header 2 | Header 3 |
+|----------+----------+----------|
+| hello    | goodby   | muahahahahahahahhahahaha hahahahahahahah ahahahhahahahahaha |
+| hello    | goodby   | muahahahahahahahhahahaha hahahahahahahah ahahahhahahahahaha |
