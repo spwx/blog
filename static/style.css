@@ -527,7 +527,7 @@ article .date {
 }
 
 .header-search-button {
-    padding: 8px;
+    padding: 8px 12px;
     background-color: var(--bg-secondary);
     color: var(--fg-secondary);
     border: 2px solid var(--border-primary);
@@ -537,6 +537,7 @@ article .date {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    height: auto;
 }
 
 .header-search-button:hover {
