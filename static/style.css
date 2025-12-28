@@ -142,12 +142,12 @@ header h1 {
 }
 
 header h1 a {
-    color: var(--fg-primary);
+    color: var(--heading-h2);
     text-decoration: none;
 }
 
 header h1 a:hover {
-    color: var(--color-link);
+    color: var(--heading-h4);
 }
 
 main {
