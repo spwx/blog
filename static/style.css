@@ -138,7 +138,7 @@ header {
 
 .header-controls {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 12px;
 }
 
