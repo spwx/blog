@@ -129,11 +129,23 @@ struct SearchTemplate {
     results: Vec<SearchResult>,
 }
 
+fn decode_html_entities(text: &str) -> String {
+    text.replace("&quot;", "\"")
+        .replace("&apos;", "'")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&amp;", "&")
+        .replace("&#39;", "'")
+        .replace("&#x27;", "'")
+        .replace("&nbsp;", " ")
+}
+
 fn strip_html_tags(html: &str) -> String {
     let tag_regex = Regex::new(r"<[^>]*>").unwrap();
     let without_tags = tag_regex.replace_all(html, " ");
     let whitespace_regex = Regex::new(r"\s+").unwrap();
-    whitespace_regex.replace_all(&without_tags, " ").trim().to_string()
+    let decoded = decode_html_entities(&without_tags);
+    whitespace_regex.replace_all(&decoded, " ").trim().to_string()
 }
 
 fn generate_excerpt(content: &str, query: &str, max_length: usize) -> String {
