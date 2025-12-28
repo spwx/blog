@@ -59,10 +59,14 @@ cargo build --release
 ## Design & Credits
 
 ### Color Scheme
-The blog uses the **ef-maris-dark** color theme by [Protesilaos Stavrou](https://protesilaos.com/).
+The blog supports both **ef-maris-dark** and **ef-maris-light** themes by [Protesilaos Stavrou](https://protesilaos.com/).
 - Theme repository: [ef-themes](https://github.com/protesilaos/ef-themes)
 - License: GNU General Public License v3.0
-- The ef-maris-dark theme features marine-inspired colors optimized for legibility in dark environments
+- Marine-inspired color palettes optimized for legibility in both dark and light environments
+- Theme toggle button in header (top-right)
+- Defaults to system preference (`prefers-color-scheme`)
+- User preference stored in localStorage
+- Smooth transitions between themes
 
 ### Typography
 - **Headings**: [Farro](https://fonts.google.com/specimen/Farro) - SIL Open Font License

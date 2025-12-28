@@ -14,6 +14,101 @@
 @import url('https://fonts.googleapis.com/css2?family=Farro:wght@400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
+/* CSS Variables for Theme Switching */
+:root {
+  /* Base Colors */
+  --bg-primary: #131c2b;
+  --bg-secondary: #1d2c39;
+  --bg-tertiary: #2a3644;
+  --bg-hover: #243242;
+  --fg-primary: #eaedef;
+  --fg-secondary: #969faf;
+
+  /* Interactive */
+  --color-link: #57b0ff;
+  --color-link-hover: #2fd0db;
+
+  /* Borders */
+  --border-primary: #2a3644;
+  --border-accent: #57b0ff;
+
+  /* Rainbow Headings */
+  --heading-h1: #30c489;
+  --heading-h2: #70a0ff;
+  --heading-h3: #7fce5f;
+  --heading-h4: #2fd0db;
+  --heading-h5: #cf90ff;
+  --heading-h6: #12b4ff;
+
+  /* Syntax Highlighting */
+  --syntax-source: #eaedef;
+  --syntax-comment: #eaa4a4;
+  --syntax-keyword: #70a0ff;
+  --syntax-string: #30c489;
+  --syntax-number: #12b4ff;
+  --syntax-function: #7fce5f;
+  --syntax-type: #41bf4f;
+  --syntax-variable: #2fd0db;
+  --syntax-inline: #cf90ff;
+
+  /* Components */
+  --copy-btn-bg: #2a3644;
+  --copy-btn-fg: #969faf;
+  --copy-btn-hover-bg: #57b0ff;
+  --copy-btn-hover-fg: #131c2b;
+  --copy-btn-success-bg: #30c489;
+  --copy-btn-success-fg: #131c2b;
+
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg-primary: #edf4f8;
+  --bg-secondary: #e0e7ef;
+  --bg-tertiary: #cfd8e3;
+  --bg-hover: #dae5f0;
+  --fg-primary: #151a27;
+  --fg-secondary: #676470;
+
+  --color-link: #375cc6;
+  --color-link-hover: #1f66af;
+
+  --border-primary: #cfd8e3;
+  --border-accent: #375cc6;
+
+  --heading-h1: #007047;
+  --heading-h2: #444fcf;
+  --heading-h3: #3a6f00;
+  --heading-h4: #1f66af;
+  --heading-h5: #5f2fba;
+  --heading-h6: #003faf;
+
+  --syntax-source: #151a27;
+  --syntax-comment: #8b4052;
+  --syntax-keyword: #444fcf;
+  --syntax-string: #006f70;
+  --syntax-number: #003faf;
+  --syntax-function: #3a6f00;
+  --syntax-type: #007010;
+  --syntax-variable: #1f66af;
+  --syntax-inline: #5f2fba;
+
+  --copy-btn-bg: #cfd8e3;
+  --copy-btn-fg: #676470;
+  --copy-btn-hover-bg: #375cc6;
+  --copy-btn-hover-fg: #ffffff;
+  --copy-btn-success-bg: #007047;
+  --copy-btn-success-fg: #ffffff;
+
+  color-scheme: light;
+}
+
+/* Smooth transitions for theme switching */
+body, header, footer, .post-list li, .post-content a, .copy-button,
+.post-content table thead, .post-content table tbody tr {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -24,17 +119,20 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-size: 20px;
     line-height: 1.6;
-    color: #eaedef;
-    background-color: #131c2b;
+    color: var(--fg-primary);
+    background-color: var(--bg-primary);
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
 }
 
 header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 40px;
     padding-bottom: 20px;
-    border-bottom: 2px solid #2a3644;
+    border-bottom: 2px solid var(--border-primary);
 }
 
 header h1 {
@@ -44,12 +142,12 @@ header h1 {
 }
 
 header h1 a {
-    color: #eaedef;
+    color: var(--fg-primary);
     text-decoration: none;
 }
 
 header h1 a:hover {
-    color: #57b0ff;
+    color: var(--color-link);
 }
 
 main {
@@ -58,8 +156,8 @@ main {
 
 footer {
     padding-top: 20px;
-    border-top: 1px solid #2a3644;
-    color: #969faf;
+    border-top: 1px solid var(--border-primary);
+    color: var(--fg-secondary);
     font-size: 1em;
 }
 
@@ -70,7 +168,7 @@ footer {
 .post-list li {
     margin-bottom: 20px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #2a3644;
+    border-bottom: 1px solid var(--border-primary);
 }
 
 .post-list li:last-child {
@@ -79,7 +177,7 @@ footer {
 
 .post-list a {
     font-size: 1.4em;
-    color: #57b0ff;
+    color: var(--color-link);
     text-decoration: none;
 }
 
@@ -89,7 +187,7 @@ footer {
 
 .date {
     display: block;
-    color: #969faf;
+    color: var(--fg-secondary);
     font-size: 1em;
     margin-top: 5px;
 }
@@ -99,7 +197,7 @@ article h2 {
     font-size: 3rem;
     font-family: 'Farro', sans-serif;
     font-weight: 400;
-    color: #57b0ff;
+    color: var(--color-link);
     line-height: 1.2;
 }
 
@@ -124,42 +222,42 @@ article .date {
 
 /* Org-mode rainbow heading colors with proportional spacing */
 .post-content h1 {
-    color: #30c489;
+    color: var(--heading-h1);
     font-size: 2.2rem;
     margin-top: 3rem;
     margin-bottom: 1.5rem;
 }
 
 .post-content h2 {
-    color: #70a0ff;
+    color: var(--heading-h2);
     font-size: 1.8rem;
     margin-top: 2.5rem;
     margin-bottom: 1.2rem;
 }
 
 .post-content h3 {
-    color: #7fce5f;
+    color: var(--heading-h3);
     font-size: 1.5rem;
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
 
 .post-content h4 {
-    color: #2fd0db;
+    color: var(--heading-h4);
     font-size: 1.3rem;
     margin-top: 1.75rem;
     margin-bottom: 0.875rem;
 }
 
 .post-content h5 {
-    color: #cf90ff;
+    color: var(--heading-h5);
     font-size: 1.1rem;
     margin-top: 1.5rem;
     margin-bottom: 0.75rem;
 }
 
 .post-content h6 {
-    color: #12b4ff;
+    color: var(--heading-h6);
     font-size: 1rem;
     margin-top: 1.25rem;
     margin-bottom: 0.625rem;
@@ -170,14 +268,14 @@ article .date {
 }
 
 .post-content a {
-    color: #57b0ff;
+    color: var(--color-link);
     text-decoration: underline;
     text-decoration-style: dashed;
     transition: color 0.2s ease;
 }
 
 .post-content a:hover {
-    color: #2fd0db;
+    color: var(--color-link-hover);
 }
 
 /* Code block wrapper for copy button */
@@ -187,7 +285,7 @@ article .date {
 }
 
 .post-content pre.code {
-    background-color: #1d2c39;
+    background-color: var(--bg-secondary);
     padding: 1.25rem;
     border-radius: 5px;
     overflow-x: auto;
@@ -199,8 +297,8 @@ article .date {
     top: 0.5rem;
     right: 0.5rem;
     padding: 0.5rem;
-    background-color: #2a3644;
-    color: #969faf;
+    background-color: var(--copy-btn-bg);
+    color: var(--copy-btn-fg);
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -213,8 +311,8 @@ article .date {
 }
 
 .copy-button:hover {
-    background-color: #57b0ff;
-    color: #131c2b;
+    background-color: var(--copy-btn-hover-bg);
+    color: var(--copy-btn-hover-fg);
     opacity: 1;
 }
 
@@ -225,15 +323,15 @@ article .date {
 }
 
 .copy-button.copied {
-    background-color: #30c489;
-    color: #131c2b;
+    background-color: var(--copy-btn-success-bg);
+    color: var(--copy-btn-success-fg);
     opacity: 1;
 }
 
 .post-content code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 1em;
-    color: #cf90ff;
+    color: var(--syntax-inline);
 }
 
 .post-content ul,
@@ -251,30 +349,30 @@ article .date {
     width: 100%;
     border-collapse: collapse;
     margin: 2rem 0;
-    background-color: #1d2c39;
+    background-color: var(--bg-secondary);
     border-radius: 5px;
     overflow: hidden;
 }
 
 .post-content table thead {
-    background-color: #2a3644;
+    background-color: var(--bg-tertiary);
 }
 
 .post-content table th {
     padding: 12px 15px;
     text-align: left;
     font-weight: 600;
-    color: #70a0ff;
-    border-bottom: 2px solid #57b0ff;
+    color: var(--heading-h2);
+    border-bottom: 2px solid var(--border-accent);
 }
 
 .post-content table td {
     padding: 10px 15px;
-    border-bottom: 1px solid #2a3644;
+    border-bottom: 1px solid var(--border-primary);
 }
 
 .post-content table tbody tr:hover {
-    background-color: #243242;
+    background-color: var(--bg-hover);
 }
 
 .post-content table tbody tr:last-child td {
@@ -284,7 +382,7 @@ article .date {
 .back-link {
     display: inline-block;
     margin-top: 30px;
-    color: #57b0ff;
+    color: var(--color-link);
     text-decoration: none;
 }
 
@@ -293,11 +391,63 @@ article .date {
 }
 
 /* Syntax highlighting classes */
-.source { color: #eaedef; }
-.comment { color: #eaa4a4; font-style: italic; }
-.keyword { color: #70a0ff; font-weight: bold; }
-.string { color: #30c489; }
-.number { color: #12b4ff; }
-.function { color: #7fce5f; }
-.type { color: #41bf4f; }
-.variable { color: #2fd0db; }
+.source { color: var(--syntax-source); }
+.comment { color: var(--syntax-comment); font-style: italic; }
+.keyword { color: var(--syntax-keyword); font-weight: bold; }
+.string { color: var(--syntax-string); }
+.number { color: var(--syntax-number); }
+.function { color: var(--syntax-function); }
+.type { color: var(--syntax-type); }
+.variable { color: var(--syntax-variable); }
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: none;
+    border: 2px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg-secondary);
+    transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+    color: var(--color-link);
+    border-color: var(--color-link);
+    transform: scale(1.05);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.theme-toggle svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+/* Icon visibility based on theme */
+[data-theme="dark"] .moon-icon,
+[data-theme="light"] .sun-icon {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    .theme-toggle {
+        padding: 6px;
+    }
+
+    .theme-toggle svg {
+        width: 18px;
+        height: 18px;
+    }
+}
