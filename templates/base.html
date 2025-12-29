@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}/dev/blog{% endblock %}</title>
 
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+
     <!-- Inline theme script to prevent FOUC -->
     <script>
     (function() {
@@ -49,7 +55,7 @@
         {% block content %}{% endblock %}
     </main>
     <footer>
-        <p>&copy; <span id="current-year"></span></p>
+        <img src="/static/favicon.svg" alt="Wind rose compass" class="footer-compass">
     </footer>
     <script src="/static/script.js"></script>
 </body>
