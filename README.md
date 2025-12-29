@@ -80,3 +80,8 @@ Handles C dependencies (like `onig_sys` from syntect) without needing a Linux GC
 - Search with context excerpts
 - Wind rose compass footer
 - SVG favicon
+
+**Security:**
+- **Rate limiting** - Per-IP limits (10 req/sec, burst 20) via tower_governor to prevent abuse
+- **Search protection** - Query length limits (200 chars) and 5-second timeout
+- **HTML sanitization** - Proper entity encoding/decoding with html-escape
