@@ -11,7 +11,7 @@ excellent playlist that taught me new things about:
 - [[https://docs.rs/tower][Tower]] - middleware library
 - [[https://docs.rs/tower-http][Tower-HTTP]] - HTTP-specific middleware and utilities
 - [[https://just.systems/][Just]] - Command runner like make
-- [[https://code.visualstudio.com][VSCode]] - Free, open source code editor by Microsoft
+- [[https://code.visualstudio.com][VSCode]] - a code editor
 - and probably more
 
 * Then I Just Used AI
@@ -21,6 +21,31 @@ completely different - it really does things. I decided to use it to
 build the blog, taking it slow, one feature at a time, and it just did
 everything for me...
 
+Ultimately "we" created a self-contained blog engine built in [[https://www.rust-lang.org/][Rust]]
+that parses [[https://orgmode.org/][Org-mode]] files into HTML using [[https://github.com/PoiScript/orgize][orgize]] with frontmatter
+support. It renders them through [[https://github.com/djc/askama][Askama]] templates served by an [[https://github.com/tokio-rs/axum][Axum]]
+web framework. Content, static assets, and the web server itself is
+packaged into a single binary using [[https://github.com/pyrossh/rust-embed][rust-embed]].
+
+The styling uses a custom CSS design system ported from [[https://protesilaos.com/emacs/ef-themes][Protesilaos
+Stavrou's ef-maris]] [[https://www.gnu.org/software/emacs/][Emacs]] theme with rainbow-colored headings. Code
+blocks get [[https://github.com/trishume/syntect][syntect]]-powered syntax highlighting. A theme toggle
+switches between dark and light modes with [[https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage][localStorage]] persistence
+and system preference detection.
+
+The site has search with server-side matching and context excerpts.
+Custom typography uses [[https://fonts.google.com/specimen/Farro][Farro]] for headings and [[https://www.jetbrains.com/lp/mono/][JetBrains Mono]] for code.
+The server runs through [[https://docs.rs/tower-http][tower-http]] middleware with =gzip= compression.
+
+The standalone binary is deployed in an [[https://linuxcontainers.org/lxc/introduction/][LXC]] container on my [[https://www.proxmox.com/][Proxmox]]
+home server, behind a [[https://caddyserver.com/][Caddy]] reverse proxy with automatic HTTPS, and
+fronted by [[https://www.cloudflare.com/][Cloudflare]].
+
+I also asked Claude Code to create an =AGENTS.md= file with formatting
+rules for writing posts. This adds hyperlinks where necessary and
+formats code fragments.
+
+* Hiccups
 There were a few hiccups. Once it tried to install [[https://www.docker.com/][Docker]] in an [[https://linuxcontainers.org/lxc/introduction/][LXC]]
 container, which wasn't necessary. Just asking what it was doing set
 it back on track though.
@@ -29,16 +54,13 @@ I had a small home server I bought earlier this year but forgot how
 I'd set it up. Claude Code helped me figure out what was going on and
 get everything working again.
 
-Security needed some watching. When setting up port forwarding on my
-router, it didn't make sure I only opened those ports to [[https://www.cloudflare.com/][Cloudflare]],
+Security needed attention. When setting up port forwarding on my
+router, Claude Code didn't make sure I only opened those ports to [[https://www.cloudflare.com/][Cloudflare]],
 my web reverse-proxy service. I had to catch that myself.
 
 Claude Code also handled all the [[https://git-scm.com/][git]] stuff for me - commits, branches,
-the whole thing. I didn't have to think about version control at all.
-Which is a huge relief.
-
-Using the [[https://github.com/exa-labs/exa-mcp-server][exa-mcp server]] was helpful for getting info on libraries and
-APIs.
+the whole thing. I didn't have to think about version control at all,
+which is a huge relief.
 
 * Future Ideas For Working With Claude Code
 Next time I work with Claude Code, I'm going to ask it to generate
@@ -47,8 +69,11 @@ it's difficult to follow everything it's doing. Having scripts I can
 review and execute myself would give me better visibility and control
 over the process.
 
-I also need to find a tool to better review the diffs in a side-by-side
-way. It would be easier to see what's changing.
+I also need to find a tool to review the diffs side-by-side.
+It would be easier to see what's changing.
+
+Adding the [[https://github.com/exa-labs/exa-mcp-server][exa-mcp server]] was helpful for getting info on libraries and
+APIs, so I'll continue doing that.
 
 * Everything It Did, Or Walked Me Through
 Here's a list of everything Claude Code either implemented directly or
@@ -58,8 +83,8 @@ guided me through setting up. It's honestly impressive how much ground
 ** Initial Blog Engine Creation
 - Built entire blog from scratch using Rust, Axum, and Askama
   templating
-- [[https://orgmode.org/][Org-mode]] support - Parse and render .org files with frontmatter
-  (TITLE, DATE) using [[https://github.com/PoiScript/orgize][orgize]]
+- [[https://orgmode.org/][Org-mode]] support - Parse and render =.org= files with frontmatter
+  (=TITLE=, =DATE=) using [[https://github.com/PoiScript/orgize][orgize]]
 - Embedded architecture - Single binary with all content and static
   files baked in using [[https://github.com/pyrossh/rust-embed][rust-embed]]
 - Syntax highlighting - Integrated [[https://github.com/trishume/syntect][syntect]] for code blocks in org-mode
@@ -74,8 +99,8 @@ guided me through setting up. It's honestly impressive how much ground
 - Theme toggle - Built functional dark/light mode switcher in header
   with SVG sun/moon icons
 - Smart theme detection - Respects system preference
-  (prefers-color-scheme) on first visit
-- LocalStorage persistence - Remembers user's theme choice
+  =(prefers-color-scheme)= on first visit
+- =LocalStorage= persistence - Remembers user's theme choice
 - System theme listener - Auto-switches with OS theme if user hasn't
   manually set preference
 - Smooth transitions - CSS transitions between theme switches
@@ -86,18 +111,18 @@ guided me through setting up. It's honestly impressive how much ground
   - Headings: [[https://fonts.google.com/specimen/Farro][Farro]] ([[https://fonts.google.com/][Google Fonts]])
   - Code: [[https://www.jetbrains.com/lp/mono/][JetBrains Mono]]
   - Body: System fonts
-- Rainbow org-mode headings - Implemented colored H1-H6 using ef-maris
+- Rainbow org-mode headings - Implemented colored =H1= - =H6= using ef-maris
   palette:
-  - H1: green-cooler, H2: blue-warmer, H3: green-warmer
-  - H4: cyan, H5: magenta-cooler, H6: blue-cooler
-- Full CSS variables - Comprehensive design system with --fg-primary,
-  --bg-secondary, --color-link, etc.
+  - =H1=: =green-cooler=, =H2=: =blue-warmer=, =H3=: =green-warmer=
+  - =H4=: =cyan=, =H5=: =magenta-cooler=, =H6=: =blue-cooler=
+- Full CSS variables - Comprehensive design system with =--fg-primary=,
+  =--bg-secondary=, =--color-link=, etc.
 
 ** Search Functionality
 
-- Server-side search with /search?q=query endpoint
+- Server-side search with =/search?q=query= endpoint
 - Header search form - Integrated into header next to theme toggle
-- Search results page with context excerpts showing ~200 chars around
+- Search results page with context excerpts showing =~200 chars= around
   matches
 - HTML entity decoding - Cleaned up entities in search results
   (quotes, ampersands, etc.)
@@ -116,11 +141,11 @@ guided me through setting up. It's honestly impressive how much ground
 
 - [[https://linuxcontainers.org/lxc/introduction/][LXC]] container setup in [[https://www.proxmox.com/][Proxmox]] with proper configuration
 - [[https://caddyserver.com/][Caddy]] reverse proxy - Automatic HTTPS with [[https://letsencrypt.org/][Let's Encrypt]] for
-  wall.ninja
-- [[https://systemd.io/][Systemd]] service - Auto-restart on failure, proper logging
+  =wall.ninja=
+- [[https://systemd.io/][systemd]] service - Auto-restart on failure, proper logging
 - [[https://www.cloudflare.com/][Cloudflare]] + [[https://opnsense.org/][OPNsense]] - DNS proxy, DDoS protection, port forwarding
-- Created setup-blog.sh - Automated server provisioning script
-- Created justfile - just deploy command for one-command deployments
+- Created =setup-blog.sh= - Automated server provisioning script
+- Created =justfile= - =just deploy= command for one-command deployments
 - Cross-compilation setup - [[https://github.com/rust-cross/cargo-zigbuild][cargo-zigbuild]] + [[https://ziglang.org/][zig]] for Mac → Linux
   builds
 
@@ -134,12 +159,14 @@ guided me through setting up. It's honestly impressive how much ground
 
 ** Documentation
 
-- Comprehensive README - Tech stack, project structure, deployment
+- Comprehensive =README= - Tech stack, project structure, deployment
   instructions, design credits
 - Cross-compilation docs - Why [[https://ziglang.org/][zig]] is used and how to set it up
 - Server setup guide - Complete infrastructure documentation
 
 * Example Output
+Here's an example of what the rendered content looks like:
+
 ** Headline 2
 *** Headline 3
 **** Headline 4

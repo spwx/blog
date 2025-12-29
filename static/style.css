@@ -63,6 +63,9 @@
   --copy-btn-success-bg: #30c489;
   --copy-btn-success-fg: #131c2b;
 
+  /* Logo */
+  --logo-color: #30c489;
+
   color-scheme: dark;
 }
 
@@ -103,6 +106,9 @@
   --copy-btn-hover-fg: #ffffff;
   --copy-btn-success-bg: #007047;
   --copy-btn-success-fg: #ffffff;
+
+  /* Logo */
+  --logo-color: #007047;
 
   color-scheme: light;
 }
@@ -154,13 +160,13 @@ header h1 {
 
 header h1 a {
     font-family: 'Victor Mono', monospace;
-    color: #30c489;
+    color: var(--logo-color);
     text-decoration: none;
     text-shadow:
-        0 0 10px rgba(48, 196, 137, 0.8),
-        0 0 20px rgba(48, 196, 137, 0.6),
-        0 0 30px rgba(48, 196, 137, 0.4),
-        0 0 40px rgba(48, 196, 137, 0.2);
+        0 0 10px color-mix(in srgb, var(--logo-color) 80%, transparent),
+        0 0 20px color-mix(in srgb, var(--logo-color) 60%, transparent),
+        0 0 30px color-mix(in srgb, var(--logo-color) 40%, transparent),
+        0 0 40px color-mix(in srgb, var(--logo-color) 20%, transparent);
     letter-spacing: 0.1em;
     filter: blur(0.3px);
     animation: flicker 4s infinite alternate;
@@ -170,27 +176,27 @@ header h1 a {
     0%, 100% {
         opacity: 1;
         text-shadow:
-            0 0 10px rgba(48, 196, 137, 0.8),
-            0 0 20px rgba(48, 196, 137, 0.6),
-            0 0 30px rgba(48, 196, 137, 0.4),
-            0 0 40px rgba(48, 196, 137, 0.2);
+            0 0 10px color-mix(in srgb, var(--logo-color) 80%, transparent),
+            0 0 20px color-mix(in srgb, var(--logo-color) 60%, transparent),
+            0 0 30px color-mix(in srgb, var(--logo-color) 40%, transparent),
+            0 0 40px color-mix(in srgb, var(--logo-color) 20%, transparent);
     }
     50% {
         opacity: 0.95;
         text-shadow:
-            0 0 8px rgba(48, 196, 137, 0.7),
-            0 0 16px rgba(48, 196, 137, 0.5),
-            0 0 24px rgba(48, 196, 137, 0.3);
+            0 0 8px color-mix(in srgb, var(--logo-color) 70%, transparent),
+            0 0 16px color-mix(in srgb, var(--logo-color) 50%, transparent),
+            0 0 24px color-mix(in srgb, var(--logo-color) 30%, transparent);
     }
 }
 
 header h1 a:hover {
-    color: #30c489;
+    color: var(--logo-color);
     text-shadow:
-        0 0 15px rgba(48, 196, 137, 1),
-        0 0 25px rgba(48, 196, 137, 0.8),
-        0 0 35px rgba(48, 196, 137, 0.6),
-        0 0 50px rgba(48, 196, 137, 0.4);
+        0 0 15px color-mix(in srgb, var(--logo-color) 100%, transparent),
+        0 0 25px color-mix(in srgb, var(--logo-color) 80%, transparent),
+        0 0 35px color-mix(in srgb, var(--logo-color) 60%, transparent),
+        0 0 50px color-mix(in srgb, var(--logo-color) 40%, transparent);
 }
 
 main {
@@ -484,17 +490,23 @@ article .date {
 @media (max-width: 768px) {
     header {
         flex-wrap: wrap;
+        justify-content: center;
     }
 
     header h1 {
         font-size: 1.8rem;
         flex: 1 0 100%;
         margin-bottom: 12px;
+        text-align: center;
+    }
+
+    header h1 a {
+        display: block;
     }
 
     .header-controls {
         flex: 1 0 100%;
-        justify-content: flex-end;
+        justify-content: center;
     }
 
     .header-search-input {
