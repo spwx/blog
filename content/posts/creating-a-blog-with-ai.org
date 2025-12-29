@@ -45,6 +45,8 @@ I also asked Claude Code to create an =AGENTS.md= file with formatting
 rules for writing posts. This adds hyperlinks where necessary and
 formats code fragments.
 
+The complete source code is available on [[https://github.com/spwx/blog][GitHub]].
+
 * Hiccups
 There were a few hiccups. Once it tried to install [[https://www.docker.com/][Docker]] in an [[https://linuxcontainers.org/lxc/introduction/][LXC]]
 container, which wasn't necessary. Just asking what it was doing set
