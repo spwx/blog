@@ -1,0 +1,142 @@
+#+TITLE: Hello World
+#+DATE: 2025-12-28
+
+* First I Studied
+I wanted to build a blog, so I spent three days working through [[https://www.youtube.com/playlist?list=PLo5Oa5DU0IYnXbSRNQrFrAW804drtEqeU][Watery
+Desert's Rust Axum Askama tutorial]]. It was an excellent introduction
+that taught me the fundamentals of:
+
+- [[https://rust-lang.org/][Rust]] - programming language
+- [[https://github.com/tokio-rs/axum][Axum]] - web framework
+- [[https://github.com/askama-rs/askama][Askama]] - Jinja-like templating engine
+- [[https://tokio.rs/][Tokio]] - Asynchronous runtime
+- [[https://docs.rs/tower][Tower]] - middleware library
+- [[https://docs.rs/tower-http][Tower-HTTP]] - HTTP-specific middleware and utilities
+- [[https://just.systems/][Just]] - Command runner like make
+- [[https://code.visualstudio.com][VSCode]] - Free, open source code editor by Microsoft
+- and probably more
+
+* Then I Just Used AI
+I already knew AI was great for learning new things. I use the [[https://claude.ai/][Claude]]
+desktop app pretty often for that. But [[https://code.claude.com/docs/en/overview][Claude Code]] is something
+completely different - it really does things. I decided to use it to
+build the blog, taking it slow, one feature at a time, and it just did
+everything for me...
+
+There were a few hiccups. Once it tried to install [[https://www.docker.com/][Docker]] in an [[https://linuxcontainers.org/lxc/introduction/][LXC]]
+container, which wasn't necessary. Just asking what it was doing set
+it back on track though.
+
+I had a small home server I bought earlier this year but forgot how
+I'd set it up. Claude Code helped me figure out what was going on and
+get everything working again.
+
+Security needed some watching. When setting up port forwarding on my
+router, it didn't make sure I only opened those ports to [[https://www.cloudflare.com/][Cloudflare]],
+my web reverse-proxy service. I had to catch that myself.
+
+Claude Code also handled all the [[https://git-scm.com/][git]] stuff for me - commits, branches,
+the whole thing. I didn't have to think about version control at all.
+Which is a huge relief.
+
+Using the [[https://github.com/exa-labs/exa-mcp-server][exa-mcp server]] was helpful for getting info on libraries and
+APIs.
+
+* Future Ideas For Working With Claude Code
+Next time I work with Claude Code, I'm going to ask it to generate
+more shell scripts instead of running commands directly. Sometimes
+it's difficult to follow everything it's doing. Having scripts I can
+review and execute myself would give me better visibility and control
+over the process.
+
+I also need to find a tool to better review the diffs in a side-by-side
+way. It would be easier to see what's changing.
+
+* Everything It Did, Or Walked Me Through
+Here's a list of everything Claude Code either implemented directly or
+guided me through setting up. It's honestly impressive how much ground
+"we" covered:
+
+** Initial Blog Engine Creation
+- Built entire blog from scratch using Rust, Axum, and Askama
+  templating
+- [[https://orgmode.org/][Org-mode]] support - Parse and render .org files with frontmatter
+  (TITLE, DATE) using [[https://github.com/PoiScript/orgize][orgize]]
+- Embedded architecture - Single binary with all content and static
+  files baked in using [[https://github.com/pyrossh/rust-embed][rust-embed]]
+- Syntax highlighting - Integrated [[https://github.com/trishume/syntect][syntect]] for code blocks in org-mode
+  posts
+- Basic routes - Index page listing posts, individual post pages,
+  static file serving
+
+** Theme & Design System
+
+- Ported ef-maris themes from [[https://www.gnu.org/software/emacs/][Emacs]] - Brought over both dark and light
+  variants from [[https://protesilaos.com/emacs/ef-themes][Protesilaos Stavrou's ef-themes]]
+- Theme toggle - Built functional dark/light mode switcher in header
+  with SVG sun/moon icons
+- Smart theme detection - Respects system preference
+  (prefers-color-scheme) on first visit
+- LocalStorage persistence - Remembers user's theme choice
+- System theme listener - Auto-switches with OS theme if user hasn't
+  manually set preference
+- Smooth transitions - CSS transitions between theme switches
+
+** Typography & Color
+
+- Custom font stack:
+  - Headings: [[https://fonts.google.com/specimen/Farro][Farro]] ([[https://fonts.google.com/][Google Fonts]])
+  - Code: [[https://www.jetbrains.com/lp/mono/][JetBrains Mono]]
+  - Body: System fonts
+- Rainbow org-mode headings - Implemented colored H1-H6 using ef-maris
+  palette:
+  - H1: green-cooler, H2: blue-warmer, H3: green-warmer
+  - H4: cyan, H5: magenta-cooler, H6: blue-cooler
+- Full CSS variables - Comprehensive design system with --fg-primary,
+  --bg-secondary, --color-link, etc.
+
+** Search Functionality
+
+- Server-side search with /search?q=query endpoint
+- Header search form - Integrated into header next to theme toggle
+- Search results page with context excerpts showing ~200 chars around
+  matches
+- HTML entity decoding - Cleaned up entities in search results
+  (quotes, ampersands, etc.)
+- Smart excerpt generation - Shows context around search terms with
+  word boundary detection
+
+** UI/UX Polish
+
+- Aligned header controls - Theme toggle and search button same height
+- Dynamic copyright year - JavaScript-based auto-updating footer
+- Code copy buttons - Added to all code blocks with visual feedback
+- Responsive design - Mobile-friendly search forms and layouts
+- Accessibility - ARIA labels, semantic HTML, keyboard navigation
+
+** Deployment Infrastructure
+
+- [[https://linuxcontainers.org/lxc/introduction/][LXC]] container setup in [[https://www.proxmox.com/][Proxmox]] with proper configuration
+- [[https://caddyserver.com/][Caddy]] reverse proxy - Automatic HTTPS with [[https://letsencrypt.org/][Let's Encrypt]] for
+  wall.ninja
+- [[https://systemd.io/][Systemd]] service - Auto-restart on failure, proper logging
+- [[https://www.cloudflare.com/][Cloudflare]] + [[https://opnsense.org/][OPNsense]] - DNS proxy, DDoS protection, port forwarding
+- Created setup-blog.sh - Automated server provisioning script
+- Created justfile - just deploy command for one-command deployments
+- Cross-compilation setup - [[https://github.com/rust-cross/cargo-zigbuild][cargo-zigbuild]] + [[https://ziglang.org/][zig]] for Mac → Linux
+  builds
+
+** Performance & Reliability
+
+- HTTP compression - Gzip compression via [[https://docs.rs/tower-http][tower-http]]
+- Rate limiting consideration - Initially implemented, then removed in
+  favor of [[https://caddyserver.com/][Caddy]]-level protection
+- Zero-downtime deploys - [[https://systemd.io/][systemd]] automatically restarts service after
+  binary update
+
+** Documentation
+
+- Comprehensive README - Tech stack, project structure, deployment
+  instructions, design credits
+- Cross-compilation docs - Why [[https://ziglang.org/][zig]] is used and how to set it up
+- Server setup guide - Complete infrastructure documentation
