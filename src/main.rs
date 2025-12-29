@@ -20,6 +20,8 @@ use syntect::{
     parsing::SyntaxSet,
     util::LinesWithEndings,
 };
+use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
+use tower_http::compression::CompressionLayer;
 
 #[derive(RustEmbed)]
 #[folder = "static/"]
@@ -319,18 +321,33 @@ async fn main() {
     let posts = parse_posts();
     let state = Arc::new(AppState { posts });
 
+    // Configure rate limiting: 100 requests per minute per IP
+    let governor_conf = Arc::new(
+        GovernorConfigBuilder::default()
+            .per_millisecond(60_000) // 1 minute
+            .burst_size(100) // 100 requests per minute
+            .finish()
+            .unwrap(),
+    );
+
     let app = Router::new()
         .route("/", get(index))
         .route("/search", get(search))
         .route("/post/:slug", get(post))
         .route("/static/*path", get(serve_static))
-        .with_state(state);
+        .with_state(state)
+        .layer(CompressionLayer::new())
+        .layer(GovernorLayer {
+            config: governor_conf,
+        });
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
         .unwrap();
 
     println!("Blog server running on http://127.0.0.1:3000");
+    println!("Compression: enabled (gzip)");
+    println!("Rate limiting: 100 requests/minute per IP");
 
     axum::serve(listener, app).await.unwrap();
 }
