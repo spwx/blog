@@ -81,6 +81,30 @@ It would be easier to see what's changing.
 Adding the [[https://github.com/exa-labs/exa-mcp-server][exa-mcp server]] was helpful for getting info on libraries and
 APIs, so I'll continue doing that.
 
+* Using The Blog Engine
+The blog engine is simple to use once it's set up. To run the local
+development server, just use:
+
+#+begin_src sh
+just run
+#+end_src
+
+This starts the server locally so you can preview changes before
+deploying. To deploy to a remote server, run:
+
+#+begin_src sh
+just deploy <IP>
+#+end_src
+
+Where =<IP>= is your server's IP address. The [[https://just.systems/][Just]] command runner
+handles all the compilation and deployment steps.
+
+Adding new posts is straightforward - create a new org mode file in
+the =content/posts/= directory with frontmatter like =#+TITLE:= and
+=#+DATE:=. The blog engine automatically picks up new files and
+renders them. Editing existing posts works the same way - just update
+the =.org= file and redeploy.
+
 * Everything It Did, Or Walked Me Through
 Here's a list of everything Claude Code either implemented directly or
 guided me through setting up. It's honestly impressive how much ground
