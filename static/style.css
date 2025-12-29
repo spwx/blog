@@ -1,5 +1,5 @@
 /*
- * Sean's Blog Stylesheet
+ * /dev/blog Stylesheet
  *
  * Color Scheme: ef-maris-dark by Protesilaos Stavrou
  * - Repository: https://github.com/protesilaos/ef-themes
@@ -10,11 +10,13 @@
  * - Inter (body text) - SIL Open Font License
  * - Farro (headings) - SIL Open Font License
  * - JetBrains Mono (code) - SIL Open Font License
+ * - Victor Mono (retro terminal logo) - SIL Open Font License
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Farro:wght@400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Victor+Mono:wght@400;500;600&display=swap');
 
 /* CSS Variables for Theme Switching */
 :root {
@@ -151,12 +153,44 @@ header h1 {
 }
 
 header h1 a {
-    color: var(--heading-h2);
+    font-family: 'Victor Mono', monospace;
+    color: #30c489;
     text-decoration: none;
+    text-shadow:
+        0 0 10px rgba(48, 196, 137, 0.8),
+        0 0 20px rgba(48, 196, 137, 0.6),
+        0 0 30px rgba(48, 196, 137, 0.4),
+        0 0 40px rgba(48, 196, 137, 0.2);
+    letter-spacing: 0.1em;
+    filter: blur(0.3px);
+    animation: flicker 4s infinite alternate;
+}
+
+@keyframes flicker {
+    0%, 100% {
+        opacity: 1;
+        text-shadow:
+            0 0 10px rgba(48, 196, 137, 0.8),
+            0 0 20px rgba(48, 196, 137, 0.6),
+            0 0 30px rgba(48, 196, 137, 0.4),
+            0 0 40px rgba(48, 196, 137, 0.2);
+    }
+    50% {
+        opacity: 0.95;
+        text-shadow:
+            0 0 8px rgba(48, 196, 137, 0.7),
+            0 0 16px rgba(48, 196, 137, 0.5),
+            0 0 24px rgba(48, 196, 137, 0.3);
+    }
 }
 
 header h1 a:hover {
-    color: var(--heading-h4);
+    color: #30c489;
+    text-shadow:
+        0 0 15px rgba(48, 196, 137, 1),
+        0 0 25px rgba(48, 196, 137, 0.8),
+        0 0 35px rgba(48, 196, 137, 0.6),
+        0 0 50px rgba(48, 196, 137, 0.4);
 }
 
 main {
@@ -168,6 +202,7 @@ footer {
     border-top: 1px solid var(--border-primary);
     color: var(--fg-secondary);
     font-size: 1em;
+    text-align: center;
 }
 
 .post-list {
