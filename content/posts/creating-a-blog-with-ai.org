@@ -58,6 +58,12 @@ Security needed attention. When setting up port forwarding on my
 router, Claude Code didn't make sure I only opened those ports to [[https://www.cloudflare.com/][Cloudflare]],
 my web reverse-proxy service. I had to catch that myself.
 
+[[https://code.claude.com/docs/en/overview][Claude Code]] doesn't read the =AGENTS.md= file on startup - only the
+=.claude/CLAUDE.md= file. I wanted formatting rules and guidelines in
+a separate file that Claude Code would follow for every session. The
+solution was adding instructions to =.claude/CLAUDE.md= telling it to
+read the =AGENTS.md= file at the start of each conversation.
+
 Claude Code also handled all the [[https://git-scm.com/][git]] stuff for me - commits, branches,
 the whole thing. I didn't have to think about version control at all,
 which is a huge relief.
