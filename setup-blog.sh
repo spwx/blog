@@ -32,9 +32,27 @@ EOF
 
 # Create Caddyfile
 cat > /etc/caddy/Caddyfile <<'EOF'
+{
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 100mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+    }
+}
+
 wall.ninja {
     reverse_proxy localhost:3000
     encode gzip
+
+    log {
+        output file /var/log/caddy/wall.ninja.log {
+            roll_size 100mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+    }
 }
 
 www.wall.ninja {
