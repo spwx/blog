@@ -46,6 +46,14 @@ Use org-mode format: =[[URL][link text]]=
 
 ## org-mode Code Formatting
 
+### Source Blocks
+
+When creating shell script source blocks, use =sh= as the language specifier, not =shell=. The syntect syntax highlighter doesn't recognize =shell=.
+
+#+begin_src sh
+just run
+#+end_src
+
 ### Wrap in =equals=
 
 **Code elements:**
