@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use askama::Template;
 use axum::{
     extract::{Path, Query, State},
@@ -6,6 +7,7 @@ use axum::{
     routing::get,
     Router,
 };
+use once_cell::sync::Lazy;
 use chrono::NaiveDate;
 use orgize::{
     export::{DefaultHtmlHandler, HtmlHandler},
@@ -140,12 +142,18 @@ struct SearchTemplate {
     results: Vec<SearchResult>,
 }
 
+static TAG_REGEX: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"<[^>]*>").expect("TAG_REGEX: hardcoded pattern is invalid")
+});
+
+static WHITESPACE_REGEX: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"\s+").expect("WHITESPACE_REGEX: hardcoded pattern is invalid")
+});
+
 fn strip_html_tags(html: &str) -> String {
-    let tag_regex = Regex::new(r"<[^>]*>").unwrap();
-    let without_tags = tag_regex.replace_all(html, " ");
-    let whitespace_regex = Regex::new(r"\s+").unwrap();
+    let without_tags = TAG_REGEX.replace_all(html, " ");
     let decoded = html_escape::decode_html_entities(&without_tags);
-    whitespace_regex.replace_all(&decoded, " ").trim().to_string()
+    WHITESPACE_REGEX.replace_all(&decoded, " ").trim().to_string()
 }
 
 fn generate_excerpt(content: &str, query: &str, max_length: usize) -> String {
@@ -284,7 +292,7 @@ async fn serve_static(Path(path): Path<String>) -> Response {
     }
 }
 
-fn parse_posts() -> HashMap<String, Post> {
+fn parse_posts() -> Result<HashMap<String, Post>> {
     let mut posts = HashMap::new();
 
     for filename in Posts::iter() {
@@ -294,8 +302,10 @@ fn parse_posts() -> HashMap<String, Post> {
         }
 
         let slug = filename_str.trim_end_matches(".org").to_string();
-        let content = Posts::get(filename_str).unwrap();
-        let text = std::str::from_utf8(content.data.as_ref()).unwrap();
+        let content = Posts::get(filename_str)
+            .with_context(|| format!("Failed to load embedded post file: {}", filename_str))?;
+        let text = std::str::from_utf8(content.data.as_ref())
+            .context("Post file contains invalid UTF-8")?;
 
         let org = Org::parse(text);
 
@@ -316,8 +326,10 @@ fn parse_posts() -> HashMap<String, Post> {
 
         let mut handler = SyntectHandler::default();
         let mut html_bytes = Vec::new();
-        org.write_html_custom(&mut html_bytes, &mut handler).unwrap();
-        let html = String::from_utf8(html_bytes).unwrap();
+        org.write_html_custom(&mut html_bytes, &mut handler)
+            .context("Failed to generate HTML from org-mode content")?;
+        let html = String::from_utf8(html_bytes)
+            .context("Generated HTML contains invalid UTF-8")?;
 
         posts.insert(
             slug.clone(),
@@ -325,6 +337,7 @@ fn parse_posts() -> HashMap<String, Post> {
                 slug,
                 title_lower: title.to_lowercase(),
                 title,
+                // Safe unwrap: 1970-01-01 is a valid date
                 date: date.unwrap_or_else(|| NaiveDate::from_ymd_opt(1970, 1, 1).unwrap()),
                 content_lower: html.to_lowercase(),
                 content: html,
@@ -332,12 +345,20 @@ fn parse_posts() -> HashMap<String, Post> {
         );
     }
 
-    posts
+    Ok(posts)
 }
 
 #[tokio::main]
 async fn main() {
-    let posts = parse_posts();
+    if let Err(e) = run().await {
+        eprintln!("Fatal error: {:?}", e);
+        std::process::exit(1);
+    }
+}
+
+async fn run() -> Result<()> {
+    let posts = parse_posts()
+        .context("Failed to parse blog posts during startup")?;
     let state = Arc::new(AppState { posts });
 
     // Configure rate limiter: 10 requests per second with burst of 20
@@ -346,7 +367,7 @@ async fn main() {
             .per_second(10)
             .burst_size(20)
             .finish()
-            .unwrap(),
+            .context("Failed to build rate limiter configuration")?,
     );
 
     let app = Router::new()
@@ -362,7 +383,7 @@ async fn main() {
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
-        .unwrap();
+        .context("Failed to bind to port 3000 - is it already in use?")?;
 
     println!("Blog server running on http://127.0.0.1:3000");
     println!("Compression: enabled (gzip)");
@@ -370,5 +391,7 @@ async fn main() {
 
     axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
         .await
-        .unwrap();
+        .context("Server error during operation")?;
+
+    Ok(())
 }
