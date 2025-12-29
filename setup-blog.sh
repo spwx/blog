@@ -44,10 +44,7 @@ EOF
 
 # Enable services
 systemctl daemon-reload
-systemctl enable blog
-systemctl enable caddy
-systemctl restart caddy
+systemctl enable --now blog
+systemctl enable --now caddy
 
 echo "=== Setup Complete! ==="
-echo "Ready for binary deployment"
-echo "Deploy with: just deploy <server-ip>"
