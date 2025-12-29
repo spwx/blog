@@ -82,6 +82,6 @@ Handles C dependencies (like `onig_sys` from syntect) without needing a Linux GC
 - SVG favicon
 
 **Security:**
-- **Rate limiting** - Per-IP limits (10 req/sec, burst 20) via tower_governor to prevent abuse
+- **Rate limiting** - Per-IP limits (10 req/sec, burst 20) via tower_governor. Uses X-Forwarded-For headers to identify real client IPs behind Cloudflare/reverse proxies.
 - **Search protection** - Query length limits (200 chars) and 5-second timeout
 - **HTML sanitization** - Proper entity encoding/decoding with html-escape

@@ -362,10 +362,12 @@ async fn run() -> Result<()> {
     let state = Arc::new(AppState { posts });
 
     // Configure rate limiter: 10 requests per second with burst of 20
+    // use_headers() enables X-Forwarded-For parsing for Cloudflare
     let governor_conf = Arc::new(
         GovernorConfigBuilder::default()
             .per_second(10)
             .burst_size(20)
+            .use_headers()
             .finish()
             .context("Failed to build rate limiter configuration")?,
     );
