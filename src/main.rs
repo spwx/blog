@@ -14,12 +14,13 @@ use orgize::{
 use regex::Regex;
 use rust_embed::RustEmbed;
 use serde::Deserialize;
-use std::{collections::HashMap, io::Write, sync::Arc};
+use std::{collections::HashMap, io::Write, sync::Arc, time::Duration};
 use syntect::{
     html::ClassedHTMLGenerator,
     parsing::SyntaxSet,
     util::LinesWithEndings,
 };
+use tokio::time::timeout;
 use tower_http::compression::CompressionLayer;
 
 #[derive(RustEmbed)]
@@ -36,6 +37,8 @@ struct Post {
     title: String,
     date: NaiveDate,
     content: String,
+    title_lower: String,
+    content_lower: String,
 }
 
 struct AppState {
@@ -76,7 +79,13 @@ impl HtmlHandler<std::io::Error> for SyntectHandler {
             );
 
             for line in LinesWithEndings::from(&block.contents) {
-                generator.parse_html_for_line_which_includes_newline(line).unwrap();
+                if let Err(e) = generator.parse_html_for_line_which_includes_newline(line) {
+                    eprintln!("Syntax highlighting error: {}", e);
+                    // Fall back to plain text rendering
+                    let escaped = html_escape::encode_text(&block.contents);
+                    write!(w, "<pre class=\"code\"><code>{}</code></pre>", escaped)?;
+                    return Ok(());
+                }
             }
 
             let html = generator.finalize();
@@ -130,22 +139,11 @@ struct SearchTemplate {
     results: Vec<SearchResult>,
 }
 
-fn decode_html_entities(text: &str) -> String {
-    text.replace("&quot;", "\"")
-        .replace("&apos;", "'")
-        .replace("&lt;", "<")
-        .replace("&gt;", ">")
-        .replace("&amp;", "&")
-        .replace("&#39;", "'")
-        .replace("&#x27;", "'")
-        .replace("&nbsp;", " ")
-}
-
 fn strip_html_tags(html: &str) -> String {
     let tag_regex = Regex::new(r"<[^>]*>").unwrap();
     let without_tags = tag_regex.replace_all(html, " ");
     let whitespace_regex = Regex::new(r"\s+").unwrap();
-    let decoded = decode_html_entities(&without_tags);
+    let decoded = html_escape::decode_html_entities(&without_tags);
     whitespace_regex.replace_all(&decoded, " ").trim().to_string()
 }
 
@@ -217,37 +215,56 @@ async fn search(
     State(state): State<Arc<AppState>>,
     Query(params): Query<SearchQuery>,
 ) -> impl IntoResponse {
-    let query = params.q.unwrap_or_default().trim().to_string();
+    const MAX_QUERY_LENGTH: usize = 200;
+    const SEARCH_TIMEOUT: Duration = Duration::from_secs(5);
 
-    let mut results: Vec<SearchResult> = if query.is_empty() {
-        Vec::new()
+    let query = params.q.unwrap_or_default().trim().to_string();
+    let query = if query.len() > MAX_QUERY_LENGTH {
+        query.chars().take(MAX_QUERY_LENGTH).collect()
     } else {
-        let query_lower = query.to_lowercase();
-        state
-            .posts
-            .values()
-            .filter(|post| {
-                post.title.to_lowercase().contains(&query_lower)
-                    || post.content.to_lowercase().contains(&query_lower)
-            })
-            .map(|post| {
-                let excerpt = if post.title.to_lowercase().contains(&query_lower) {
-                    // If title matches, show beginning of content
-                    generate_excerpt(&post.content, "", 200)
-                } else {
-                    // If content matches, show context around match
-                    generate_excerpt(&post.content, &query, 200)
-                };
-                SearchResult {
-                    post: post.clone(),
-                    excerpt,
-                }
-            })
-            .collect()
+        query
     };
 
-    // Sort results by date (newest first)
-    results.sort_by(|a, b| b.post.date.cmp(&a.post.date));
+    let search_future = async {
+        let mut results: Vec<SearchResult> = if query.is_empty() {
+            Vec::new()
+        } else {
+            let query_lower = query.to_lowercase();
+            state
+                .posts
+                .values()
+                .filter(|post| {
+                    post.title_lower.contains(&query_lower)
+                        || post.content_lower.contains(&query_lower)
+                })
+                .map(|post| {
+                    let excerpt = if post.title_lower.contains(&query_lower) {
+                        // If title matches, show beginning of content
+                        generate_excerpt(&post.content, "", 200)
+                    } else {
+                        // If content matches, show context around match
+                        generate_excerpt(&post.content, &query, 200)
+                    };
+                    SearchResult {
+                        post: post.clone(),
+                        excerpt,
+                    }
+                })
+                .collect()
+        };
+
+        // Sort results by date (newest first)
+        results.sort_by(|a, b| b.post.date.cmp(&a.post.date));
+        results
+    };
+
+    let results = match timeout(SEARCH_TIMEOUT, search_future).await {
+        Ok(results) => results,
+        Err(_) => {
+            // Timeout occurred, return empty results
+            Vec::new()
+        }
+    };
 
     SearchTemplate { query, results }
 }
@@ -305,8 +322,10 @@ fn parse_posts() -> HashMap<String, Post> {
             slug.clone(),
             Post {
                 slug,
+                title_lower: title.to_lowercase(),
                 title,
                 date: date.unwrap_or_else(|| NaiveDate::from_ymd_opt(1970, 1, 1).unwrap()),
+                content_lower: html.to_lowercase(),
                 content: html,
             },
         );
