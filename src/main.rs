@@ -14,7 +14,7 @@ use orgize::{
 use regex::Regex;
 use rust_embed::RustEmbed;
 use serde::Deserialize;
-use std::{collections::HashMap, io::Write, sync::Arc, time::Duration};
+use std::{collections::HashMap, io::Write, net::SocketAddr, sync::Arc, time::Duration};
 use syntect::{
     html::ClassedHTMLGenerator,
     parsing::SyntaxSet,
@@ -22,6 +22,7 @@ use syntect::{
 };
 use tokio::time::timeout;
 use tower_http::compression::CompressionLayer;
+use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
 
 #[derive(RustEmbed)]
 #[folder = "static/"]
@@ -339,12 +340,24 @@ async fn main() {
     let posts = parse_posts();
     let state = Arc::new(AppState { posts });
 
+    // Configure rate limiter: 10 requests per second with burst of 20
+    let governor_conf = Arc::new(
+        GovernorConfigBuilder::default()
+            .per_second(10)
+            .burst_size(20)
+            .finish()
+            .unwrap(),
+    );
+
     let app = Router::new()
         .route("/", get(index))
         .route("/search", get(search))
         .route("/post/:slug", get(post))
         .route("/static/*path", get(serve_static))
         .with_state(state)
+        .layer(GovernorLayer {
+            config: governor_conf,
+        })
         .layer(CompressionLayer::new());
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
@@ -353,6 +366,9 @@ async fn main() {
 
     println!("Blog server running on http://127.0.0.1:3000");
     println!("Compression: enabled (gzip)");
+    println!("Rate limiting: 10 req/sec per IP, burst 20");
 
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
+        .await
+        .unwrap();
 }
