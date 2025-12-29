@@ -1,15 +1,13 @@
 #+TITLE: Hello World
 #+DATE: 2025-12-28
 
-* First I Studied
-I wanted to build a blog, so I spent three days working through [[https://www.youtube.com/playlist?list=PLo5Oa5DU0IYnXbSRNQrFrAW804drtEqeU][Watery
-Desert's Rust Axum Askama tutorial]]. It was an excellent introduction
-that taught me the fundamentals of:
+* I Wanted A Blog
+I'd already been learning Rust for a while, so I spent three days
+working through [[https://www.youtube.com/playlist?list=PLo5Oa5DU0IYnXbSRNQrFrAW804drtEqeU][Watery Desert's Rust Axum Askama tutorial]]. It was an
+excellent playlist that taught me new things about:
 
-- [[https://rust-lang.org/][Rust]] - programming language
 - [[https://github.com/tokio-rs/axum][Axum]] - web framework
 - [[https://github.com/askama-rs/askama][Askama]] - Jinja-like templating engine
-- [[https://tokio.rs/][Tokio]] - Asynchronous runtime
 - [[https://docs.rs/tower][Tower]] - middleware library
 - [[https://docs.rs/tower-http][Tower-HTTP]] - HTTP-specific middleware and utilities
 - [[https://just.systems/][Just]] - Command runner like make
@@ -140,3 +138,39 @@ guided me through setting up. It's honestly impressive how much ground
   instructions, design credits
 - Cross-compilation docs - Why [[https://ziglang.org/][zig]] is used and how to set it up
 - Server setup guide - Complete infrastructure documentation
+
+* Example Output
+** Headline 2
+*** Headline 3
+**** Headline 4
+***** Headline 5
+This is some text [[https://wall.ninja][with a link.]] =This is some code text=.
+
+#+caption: This is a source block
+#+begin_src rust
+fn fibonacci(n: u32) -> u64 {
+    match n {
+        0 => 0,
+        1 => 1,
+        _ => fibonacci(n - 1) + fibonacci(n - 2),
+    }
+}
+
+fn main() {
+    let n = 10;
+    println!("Fibonacci({}) = {}", n, fibonacci(n));
+
+    // Print the first 20 Fibonacci numbers
+    println!("\nFirst 20 Fibonacci numbers:");
+    for i in 0..20 {
+        println!("F({}) = {}", i, fibonacci(i));
+    }
+}
+#+end_src
+
+
+#+caption: This is a table
+| Here    | Is    | A    | Table |
+|---------+-------+------+-------|
+| Welcome | to    | my   | blog  |
+| Please  | enjoy | your | stay  |
