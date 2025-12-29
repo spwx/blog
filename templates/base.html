@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sean's Blog{% endblock %}</title>
+    <title>{% block title %}/dev/blog{% endblock %}</title>
 
     <!-- Inline theme script to prevent FOUC -->
     <script>
@@ -18,7 +18,7 @@
 </head>
 <body>
     <header>
-        <h1><a href="/">Sean's Blog</a></h1>
+        <h1><a href="/">/dev/blog</a></h1>
         <div class="header-controls">
             <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
                 <svg class="sun-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -49,7 +49,7 @@
         {% block content %}{% endblock %}
     </main>
     <footer>
-        <p>&copy; <span id="current-year"></span> Sean Wall</p>
+        <p>&copy; <span id="current-year"></span></p>
     </footer>
     <script src="/static/script.js"></script>
 </body>
