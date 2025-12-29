@@ -50,9 +50,90 @@ The blog compiles into a single binary with all content and static files embedde
 cargo build --release
 ```
 
+## Deployment
+
+### Prerequisites
+
+For cross-compiling from macOS to Linux x86_64:
+
+```bash
+# Install cargo-zigbuild for cross-compilation
+cargo install cargo-zigbuild
+
+# Install zig (provides cross-compilation toolchain)
+brew install zig
+```
+
+### Deploy to Server
+
+The project includes a justfile for easy deployment:
+
+```bash
+# Build, copy to server, and restart service
+just deploy <server-ip>
+```
+
+This command:
+1. Cross-compiles the binary for Linux using `cargo zigbuild`
+2. Copies the binary to `/opt/blog/` on the server via SCP
+3. Restarts the `blog.service` systemd service
+
+### Server Setup
+
+For initial server setup (LXC container or VM), run `setup-blog.sh` on the server:
+
+```bash
+# On the server
+bash setup-blog.sh
+```
+
+This script:
+- Installs Caddy (web server with automatic HTTPS)
+- Configures systemd service for the blog
+- Sets up Caddy as reverse proxy to localhost:3000
+- Enables automatic restarts on failure
+
+**Caddy Configuration** (`/etc/caddy/Caddyfile`):
+```
+wall.ninja {
+    reverse_proxy localhost:3000
+    encode gzip
+}
+
+www.wall.ninja {
+    redir https://wall.ninja{uri} permanent
+}
+```
+
+**Systemd Service** (`/etc/systemd/system/blog.service`):
+```ini
+[Unit]
+Description=Blog Engine
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/blog
+ExecStart=/opt/blog/blog-engine
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Cross-Compilation Details
+
+The project uses **cargo-zigbuild** instead of standard `cargo build` for cross-compilation because:
+- Handles C dependencies (like `onig_sys` from syntect) without needing Linux GCC toolchain on macOS
+- Zig provides a robust, self-contained cross-compilation environment
+- No need to install platform-specific toolchains
+
 ## Routes
 
 - `GET /` - List all posts (sorted by date, newest first)
+- `GET /search?q=query` - Search posts by title and content
 - `GET /post/:slug` - View individual post
 - `GET /static/*` - Serve static files
 
