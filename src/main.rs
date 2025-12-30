@@ -7,7 +7,7 @@ use axum::{
     routing::get,
     Router,
 };
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use chrono::NaiveDate;
 use orgize::{
     export::{DefaultHtmlHandler, HtmlHandler},
@@ -144,11 +144,11 @@ struct SearchTemplate {
     results: Vec<SearchResult>,
 }
 
-static TAG_REGEX: Lazy<Regex> = Lazy::new(|| {
+static TAG_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"<[^>]*>").expect("TAG_REGEX: hardcoded pattern is invalid")
 });
 
-static WHITESPACE_REGEX: Lazy<Regex> = Lazy::new(|| {
+static WHITESPACE_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"\s+").expect("WHITESPACE_REGEX: hardcoded pattern is invalid")
 });
 
