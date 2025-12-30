@@ -32,8 +32,7 @@
     <li>
       <a href="/post/{{ result.post.slug }}" class="search-result-title">{{ result.post.title }}</a>
       <span class="date">
-        {{ result.post.date }}
-        {% if result.post.updated != "" %}<span class="updated-badge">Updated</span>{% endif %}
+        Published: {{ result.post.date }}{% if result.post.updated != "" %} • Updated: {{ result.post.updated }}{% endif %}
       </span>
       <p class="search-excerpt">{{ result.excerpt }}</p>
     </li>

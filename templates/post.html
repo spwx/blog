@@ -6,13 +6,8 @@
 <article>
     <h2>{{ post.title }}</h2>
     <p class="date">
-        Published: {{ post.date }}
+        Published: {{ post.date }}{% if post.updated != "" %} • Updated: {{ post.updated }}{% endif %}
     </p>
-    {% if post.updated != "" %}
-    <p class="date updated">
-        Updated: {{ post.updated }}
-    </p>
-    {% endif %}
     <div class="post-content">
         {{ post.content|safe }}
     </div>

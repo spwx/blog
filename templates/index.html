@@ -9,7 +9,7 @@
     <li>
         <a href="/post/{{ post.slug }}">{{ post.title }}</a>
         <span class="date">
-            Published: {{ post.date }}{% if post.updated != "" %} - Updated: {{ post.updated }}{% endif %}
+            Published: {{ post.date }}{% if post.updated != "" %} • Updated: {{ post.updated }}{% endif %}
         </span>
     </li>
     {% endfor %}
