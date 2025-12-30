@@ -263,6 +263,19 @@ article .date {
     margin-bottom: 30px;
 }
 
+article .date.updated {
+    margin-top: -35px;
+    margin-bottom: 30px;
+}
+
+.updated-badge {
+    font-size: 0.75em;
+    padding: 0.2em 0.5em;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+    margin-left: 0.5em;
+}
+
 .post-content {
     margin-top: 20px;
 }
