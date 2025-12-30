@@ -28,6 +28,9 @@ use tower_governor::{
     governor::GovernorConfigBuilder, key_extractor::SmartIpKeyExtractor, GovernorLayer,
 };
 
+// Include generated metadata from build.rs
+include!(concat!(env!("OUT_DIR"), "/generated_metadata.rs"));
+
 #[derive(RustEmbed)]
 #[folder = "static/"]
 struct Static;
@@ -41,6 +44,7 @@ struct Post {
     slug: String,
     title: String,
     date: NaiveDate,
+    updated: String,
     content: String,
     title_lower: String,
     content_lower: String,
@@ -340,14 +344,29 @@ fn parse_posts() -> Result<HashMap<String, Post>> {
         let html = String::from_utf8(html_bytes)
             .context("Generated HTML contains invalid UTF-8")?;
 
+        // Safe unwrap: 1970-01-01 is a valid date
+        let pub_date = date.unwrap_or_else(|| NaiveDate::from_ymd_opt(1970, 1, 1).unwrap());
+
+        // Look up last updated date from git metadata
+        let updated = POST_UPDATED_DATES
+            .iter()
+            .find(|(fname, _)| *fname == filename_str)
+            .and_then(|(_, date_str)| {
+                NaiveDate::parse_from_str(date_str, "%Y-%m-%d")
+                    .ok()
+                    .filter(|updated_date| updated_date != &pub_date)
+                    .map(|_| date_str.to_string())
+            })
+            .unwrap_or_default();
+
         posts.insert(
             slug.clone(),
             Post {
                 slug,
                 title_lower: title.to_lowercase(),
                 title,
-                // Safe unwrap: 1970-01-01 is a valid date
-                date: date.unwrap_or_else(|| NaiveDate::from_ymd_opt(1970, 1, 1).unwrap()),
+                date: pub_date,
+                updated,
                 content_lower: html.to_lowercase(),
                 content: html,
             },
