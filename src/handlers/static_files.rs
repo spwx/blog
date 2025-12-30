@@ -1,4 +1,8 @@
-use axum::{extract::Path, http::StatusCode, response::{IntoResponse, Response}};
+use axum::{
+    extract::Path,
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
 use rust_embed::RustEmbed;
 
 #[derive(RustEmbed)]
