@@ -11,7 +11,8 @@
       "Bash(cargo build:*)",
       "Bash(cat:*)",
       "Bash(head:*)",
-      "Bash(cargo nextest run:*)"
+      "Bash(cargo nextest run:*)",
+      "mcp__exa__get_code_context_exa"
     ]
   },
   "enabledMcpjsonServers": [
