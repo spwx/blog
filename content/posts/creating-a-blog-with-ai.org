@@ -37,6 +37,10 @@ The site has search with server-side matching and context excerpts.
 Custom typography uses [[https://fonts.google.com/specimen/Farro][Farro]] for headings and [[https://www.jetbrains.com/lp/mono/][JetBrains Mono]] for code.
 The server runs through [[https://docs.rs/tower-http][tower-http]] middleware with =gzip= compression.
 
+Rate limiting protects the site using the [[https://github.com/benwis/tower-governor][tower-governor]] crate,
+which applies limits based on the =X-Forwarded-For= header to properly
+handle requests coming through [[https://www.cloudflare.com/][Cloudflare]] and the [[https://caddyserver.com/][Caddy]] reverse proxy.
+
 Posts automatically display last updated timestamps extracted from [[https://git-scm.com/][git]] commit history - a build script pulls the last commit date for each post and embeds it at compile time, only showing the updated date when it differs from the publication date.
 
 The standalone binary is deployed in an [[https://linuxcontainers.org/lxc/introduction/][LXC]] container on my [[https://www.proxmox.com/][Proxmox]]
@@ -216,8 +220,9 @@ guided me through setting up. It's honestly impressive how much ground
 ** Performance & Reliability
 
 - HTTP compression - Gzip compression via [[https://docs.rs/tower-http][tower-http]]
-- Rate limiting consideration - Initially implemented, then removed in
-  favor of [[https://caddyserver.com/][Caddy]]-level protection
+- Rate limiting - Implemented with [[https://github.com/benwis/tower-governor][tower-governor]] using
+  =X-Forwarded-For= header for proper client identification behind
+  reverse proxy
 - Zero-downtime deploys - [[https://systemd.io/][systemd]] automatically restarts service after
   binary update
 
