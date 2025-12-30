@@ -564,6 +564,14 @@ article .date.updated {
         width: 14px;
         height: 14px;
     }
+
+    .date-updated {
+        display: block;
+    }
+
+    .date-separator {
+        display: none;
+    }
 }
 
 /* Header Search Form */
