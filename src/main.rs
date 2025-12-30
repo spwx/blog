@@ -3,7 +3,7 @@ use askama::Template;
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
-    response::{IntoResponse, Response},
+    response::{Html, IntoResponse, Response},
     routing::get,
     Router,
 };
@@ -207,19 +207,23 @@ async fn index(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     let mut posts: Vec<Post> = state.posts.values().cloned().collect();
     posts.sort_by(|a, b| b.date.cmp(&a.date));
 
-    IndexTemplate { posts }
+    match (IndexTemplate { posts }).render() {
+        Ok(html) => Html(html).into_response(),
+        Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+    }
 }
 
 async fn post(
     State(state): State<Arc<AppState>>,
     Path(slug): Path<String>,
-) -> Result<impl IntoResponse, StatusCode> {
-    state
-        .posts
-        .get(&slug)
-        .cloned()
-        .map(|post| PostTemplate { post })
-        .ok_or(StatusCode::NOT_FOUND)
+) -> impl IntoResponse {
+    match state.posts.get(&slug).cloned() {
+        Some(post) => match (PostTemplate { post }).render() {
+            Ok(html) => Html(html).into_response(),
+            Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+        },
+        None => StatusCode::NOT_FOUND.into_response(),
+    }
 }
 
 async fn search(
@@ -277,7 +281,10 @@ async fn search(
         }
     };
 
-    SearchTemplate { query, results }
+    match (SearchTemplate { query, results }).render() {
+        Ok(html) => Html(html).into_response(),
+        Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+    }
 }
 
 async fn serve_static(Path(path): Path<String>) -> Response {
@@ -377,12 +384,10 @@ async fn run() -> Result<()> {
     let app = Router::new()
         .route("/", get(index))
         .route("/search", get(search))
-        .route("/post/:slug", get(post))
-        .route("/static/*path", get(serve_static))
+        .route("/post/{slug}", get(post))
+        .route("/static/{*path}", get(serve_static))
         .with_state(state)
-        .layer(GovernorLayer {
-            config: governor_conf,
-        })
+        .layer(GovernorLayer::new(governor_conf))
         .layer(CompressionLayer::new());
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
