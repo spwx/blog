@@ -45,6 +45,10 @@ I also asked Claude Code to create an =AGENTS.md= file with formatting
 rules for writing posts. This adds hyperlinks where necessary and
 formats code fragments.
 
+Claude Code also handled all the [[https://git-scm.com/][git]] stuff for me - commits, branches,
+the whole thing. I didn't have to think about version control at all,
+which is a huge relief.
+
 The complete source code is available on [[https://github.com/spwx/blog][GitHub]].
 
 * Hiccups
@@ -66,9 +70,20 @@ a separate file that Claude Code would follow for every session. The
 solution was adding instructions to =.claude/CLAUDE.md= telling it to
 read the =AGENTS.md= file at the start of each conversation.
 
-Claude Code also handled all the [[https://git-scm.com/][git]] stuff for me - commits, branches,
-the whole thing. I didn't have to think about version control at all,
-which is a huge relief.
+Version upgrades were surprisingly difficult. When I asked Claude Code
+to upgrade to a major version of [[https://github.com/djc/askama][Askama]], it got really confused about
+some pretty simple things. It couldn't figure out basic [[https://github.com/djc/askama][Askama]] usage
+patterns until I explicitly explained how the templating worked. This
+was strange because it had been working with [[https://github.com/djc/askama][Askama]] successfully
+earlier.
+
+When adding rate limiting, Claude Code hallucinated and used a
+completely wrong method. This was the only straight up hallucination I
+saw during the project.
+
+Claude Code's world knowledge is outdated. It tried to use
+[[https://crates.io/crates/once_cell][once_cell]] instead of the built-in [[https://doc.rust-lang.org/std/sync/struct.LazyLock.html][std::sync::LazyLock]] that's now
+available in standard [[https://www.rust-lang.org/][Rust]]. I had to prompt it to fix this.
 
 * Future Ideas For Working With Claude Code
 Next time I work with Claude Code, I'm going to ask it to generate
@@ -82,6 +97,11 @@ It would be easier to see what's changing.
 
 Adding the [[https://github.com/exa-labs/exa-mcp-server][exa-mcp server]] was helpful for getting info on libraries and
 APIs, so I'll continue doing that.
+
+Starting with the latest versions of libraries would avoid upgrade
+problems down the line. The version upgrade difficulties showed that
+Claude Code handles greenfield development better than migrating
+existing code to new major versions.
 
 * Using The Blog Engine
 The blog engine is simple to use once it's set up. To run the local
