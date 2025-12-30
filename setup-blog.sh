@@ -4,15 +4,19 @@ set -e
 echo "=== Blog Server Setup ==="
 
 # Update system
-apt update && apt upgrade -y
+echo "Updating system packages..."
+apt-get update && apt-get upgrade -y
 
 # Install only what we need
-apt install -y caddy openssh-server
+echo "Installing Caddy and OpenSSH..."
+apt-get install -y caddy openssh-server
 
 # Create blog directory
+echo "Creating blog directory..."
 mkdir -p /opt/blog
 
 # Create systemd service
+echo "Creating blog systemd service..."
 cat > /etc/systemd/system/blog.service <<'EOF'
 [Unit]
 Description=Blog Engine
@@ -31,6 +35,7 @@ WantedBy=multi-user.target
 EOF
 
 # Create Caddyfile
+echo "Creating Caddyfile with logging configuration..."
 cat > /etc/caddy/Caddyfile <<'EOF'
 {
     log {
@@ -60,9 +65,14 @@ www.wall.ninja {
 }
 EOF
 
-# Enable services
+# Enable and restart services to pick up config changes
+echo "Reloading systemd configuration..."
 systemctl daemon-reload
-systemctl enable --now blog
-systemctl enable --now caddy
+echo "Enabling and restarting blog service..."
+systemctl enable blog
+systemctl restart blog
+echo "Enabling and reloading Caddy service..."
+systemctl enable caddy
+systemctl reload-or-restart caddy
 
 echo "=== Setup Complete! ==="

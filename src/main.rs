@@ -24,7 +24,9 @@ use syntect::{
 };
 use tokio::time::timeout;
 use tower_http::compression::CompressionLayer;
-use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
+use tower_governor::{
+    governor::GovernorConfigBuilder, key_extractor::SmartIpKeyExtractor, GovernorLayer,
+};
 
 #[derive(RustEmbed)]
 #[folder = "static/"]
@@ -362,12 +364,12 @@ async fn run() -> Result<()> {
     let state = Arc::new(AppState { posts });
 
     // Configure rate limiter: 10 requests per second with burst of 20
-    // use_headers() enables X-Forwarded-For parsing for Cloudflare
+    // SmartIpKeyExtractor reads X-Forwarded-For header to get real client IP behind Cloudflare
     let governor_conf = Arc::new(
         GovernorConfigBuilder::default()
             .per_second(10)
             .burst_size(20)
-            .use_headers()
+            .key_extractor(SmartIpKeyExtractor)
             .finish()
             .context("Failed to build rate limiter configuration")?,
     );
