@@ -423,3 +423,98 @@ async fn run() -> Result<()> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use pretty_assertions::assert_eq;
+
+    // Tests for strip_html_tags()
+    #[test]
+    fn test_strip_html_tags_simple() {
+        let input = "<p>Hello <strong>world</strong></p>";
+        let expected = "Hello world";
+        assert_eq!(strip_html_tags(input), expected);
+    }
+
+    #[test]
+    fn test_strip_html_tags_with_entities() {
+        let input = "<p>Hello &amp; goodbye &quot;world&quot;</p>";
+        let expected = "Hello & goodbye \"world\"";
+        assert_eq!(strip_html_tags(input), expected);
+    }
+
+    #[test]
+    fn test_strip_html_tags_nested() {
+        let input = "<div><p><span>Nested</span> content</p></div>";
+        let expected = "Nested content";
+        assert_eq!(strip_html_tags(input), expected);
+    }
+
+    #[test]
+    fn test_strip_html_tags_multiple_spaces() {
+        let input = "<p>Multiple    spaces   here</p>";
+        let expected = "Multiple spaces here";
+        assert_eq!(strip_html_tags(input), expected);
+    }
+
+    #[test]
+    fn test_strip_html_tags_empty() {
+        assert_eq!(strip_html_tags(""), "");
+    }
+
+    // Tests for generate_excerpt()
+    #[test]
+    fn test_generate_excerpt_with_match_in_middle() {
+        let content = "<p>This is a long content with search term somewhere in the middle and more text after it continues</p>";
+        let query = "search term";
+        let excerpt = generate_excerpt(content, query, 50);
+
+        assert!(excerpt.contains("search term"));
+        assert!(excerpt.len() <= 55); // Account for "..."
+    }
+
+    #[test]
+    fn test_generate_excerpt_no_match() {
+        let content = "<p>This is some content without the query</p>";
+        let query = "missing";
+        let excerpt = generate_excerpt(content, query, 30);
+
+        assert!(excerpt.starts_with("This is"));
+        assert!(excerpt.ends_with("...") || excerpt.len() <= 30);
+    }
+
+    #[test]
+    fn test_generate_excerpt_query_at_start() {
+        let content = "<p>search term is at the beginning of this content</p>";
+        let query = "search term";
+        let excerpt = generate_excerpt(content, query, 50);
+
+        assert!(excerpt.contains("search term"));
+        assert!(!excerpt.starts_with("..."));
+    }
+
+    #[test]
+    fn test_generate_excerpt_short_content() {
+        let content = "<p>Short</p>";
+        let query = "query";
+        let excerpt = generate_excerpt(content, query, 100);
+
+        assert_eq!(excerpt, "Short");
+        assert!(!excerpt.ends_with("..."));
+    }
+
+    #[test]
+    fn test_generate_excerpt_empty_query() {
+        let content = "<p>Some content here</p>";
+        let excerpt = generate_excerpt(content, "", 20);
+
+        assert!(!excerpt.is_empty());
+    }
+
+    #[test]
+    fn test_generate_excerpt_empty_content() {
+        let excerpt = generate_excerpt("", "query", 100);
+        assert_eq!(excerpt, "");
+    }
+}

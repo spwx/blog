@@ -20,5 +20,8 @@ html-escape = "0.2"
 tower_governor = { version = "0.8", features = ["axum"] }
 anyhow = "1.0"
 
+[dev-dependencies]
+pretty_assertions = "1.4"
+
 [build-dependencies]
 chrono = "0.4"
