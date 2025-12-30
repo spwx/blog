@@ -19,7 +19,7 @@ pub async fn run() -> Result<()> {
     // SmartIpKeyExtractor reads X-Forwarded-For header to get real client IP behind Cloudflare
     let governor_conf = Arc::new(
         GovernorConfigBuilder::default()
-            .per_second(10)
+            .per_millisecond(100)
             .burst_size(20)
             .key_extractor(SmartIpKeyExtractor)
             .finish()
@@ -32,8 +32,8 @@ pub async fn run() -> Result<()> {
         .route("/post/{slug}", get(post))
         .route("/static/{*path}", get(serve_static))
         .with_state(state)
-        .layer(GovernorLayer::new(governor_conf))
-        .layer(CompressionLayer::new());
+        .layer(CompressionLayer::new())
+        .layer(GovernorLayer::new(governor_conf));
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
@@ -43,6 +43,9 @@ pub async fn run() -> Result<()> {
     println!("Compression: enabled (gzip)");
     println!("Rate limiting: 10 req/sec per IP, burst 20");
 
+    // into_make_service_with_connect_info provides SocketAddr to tower-governor's SmartIpKeyExtractor
+    // This allows it to fall back to the connection IP when X-Forwarded-For header
+    // is not present (e.g., local dev without Cloudflare proxy)
     axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
         .await
         .context("Server error during operation")?;
