@@ -112,14 +112,24 @@ just run
 #+end_src
 
 This starts the server locally so you can preview changes before
-deploying. To deploy to a remote server, run:
+deploying.
+
+To setup a remote Ubuntu server, run:
+
+#+begin_src sh
+just setup <IP>
+#+end_src
+
+This configures the server infrastructure including [[https://caddyserver.com/][Caddy]], [[https://systemd.io/][systemd]]
+services, and required directories. After setup is complete, deploy to
+the server with:
 
 #+begin_src sh
 just deploy <IP>
 #+end_src
 
-Where =<IP>= is your server's IP address. The [[https://just.systems/][Just]] command runner
-handles all the compilation and deployment steps.
+The [[https://just.systems/][Just]] command runner handles all the compilation and deployment
+steps.
 
 Adding new posts is straightforward - create a new org mode file in
 the =content/posts/= directory with frontmatter like =#+TITLE:= and
