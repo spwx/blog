@@ -20,6 +20,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 cargo install cargo-watch
 brew install just
 
+# Testing tools
+cargo install cargo-nextest
+cargo install cargo-llvm-cov
+
 # Deployment tools (macOS → Linux cross-compilation)
 cargo install cargo-zigbuild
 brew install zig
@@ -32,6 +36,23 @@ brew install zig
 **Run development server** (auto-reloads on file changes):
 ```bash
 just run
+```
+
+## Testing
+
+**Run tests:**
+```bash
+cargo nextest run
+```
+
+**Run tests with coverage:**
+```bash
+cargo llvm-cov nextest
+```
+
+**Generate HTML coverage report:**
+```bash
+cargo llvm-cov nextest --open
 ```
 
 ## Writing Posts
