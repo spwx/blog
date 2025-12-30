@@ -47,15 +47,21 @@ See `AGENTS.md` for formatting guidelines.
 
 ## Deployment
 
+**Initial Server Setup:**
+
+```bash
+just setup <server-ip>
+```
+
+This copies `setup-blog.sh` to the server and runs it. The script installs Caddy (reverse proxy with automatic HTTPS) and configures the systemd services.
+
+**Deploy Updates:**
+
 ```bash
 just deploy <server-ip>
 ```
 
 This cross-compiles for Linux, copies the binary to `/opt/blog/`, and restarts the systemd service.
-
-**Server Setup:**
-
-Run `setup-blog.sh` on the server to install Caddy (reverse proxy with automatic HTTPS) and configure the systemd service.
 
 **Why cargo-zigbuild?**
 
