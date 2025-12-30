@@ -68,9 +68,9 @@ EOF
 # Enable and restart services to pick up config changes
 echo "Reloading systemd configuration..."
 systemctl daemon-reload
-echo "Enabling and restarting blog service..."
+echo "Enabling blog service..."
 systemctl enable blog
-systemctl restart blog
+# Note: The blog service will be started by the first deploy
 echo "Enabling and reloading Caddy service..."
 systemctl enable caddy
 systemctl reload-or-restart caddy
