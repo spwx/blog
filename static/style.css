@@ -700,7 +700,7 @@ article .date.updated {
 
 .search-excerpt {
     margin: 0;
-    color: var(--fg-secondary);
+    color: var(--fg-primary);
     font-size: 0.95em;
     line-height: 1.5;
 }
