@@ -5,7 +5,14 @@
 {% block content %}
 <article>
     <h2>{{ post.title }}</h2>
-    <p class="date">{{ post.date }}</p>
+    <p class="date">
+        Published: {{ post.date }}
+    </p>
+    {% if post.updated != "" %}
+    <p class="date updated">
+        Updated: {{ post.updated }}
+    </p>
+    {% endif %}
     <div class="post-content">
         {{ post.content|safe }}
     </div>

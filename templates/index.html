@@ -8,7 +8,9 @@
     {% for post in posts %}
     <li>
         <a href="/post/{{ post.slug }}">{{ post.title }}</a>
-        <span class="date">{{ post.date }}</span>
+        <span class="date">
+            Published: {{ post.date }}{% if post.updated != "" %} - Updated: {{ post.updated }}{% endif %}
+        </span>
     </li>
     {% endfor %}
 </ul>

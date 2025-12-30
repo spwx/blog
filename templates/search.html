@@ -31,7 +31,10 @@
     {% for result in results %}
     <li>
       <a href="/post/{{ result.post.slug }}" class="search-result-title">{{ result.post.title }}</a>
-      <span class="date">{{ result.post.date }}</span>
+      <span class="date">
+        {{ result.post.date }}
+        {% if result.post.updated != "" %}<span class="updated-badge">Updated</span>{% endif %}
+      </span>
       <p class="search-excerpt">{{ result.excerpt }}</p>
     </li>
     {% else %}
