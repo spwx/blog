@@ -97,14 +97,6 @@ just run
 - Theme names: ef-maris, dracula, solarized
 - Service names: Cloudflare, GitHub, Docker
 
-## Dependencies
-
-When adding or updating dependencies:
-- Always search for the latest stable version before using a dependency
-- Check compatibility with existing dependencies (e.g., axum-test version must match axum version)
-- Verify the dependency is actively maintained
-- Use official documentation or crates.io to confirm version numbers
-
 ## Git Commits
 
 When committing changes to a git repository:
