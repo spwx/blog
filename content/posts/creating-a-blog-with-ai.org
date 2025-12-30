@@ -37,6 +37,8 @@ The site has search with server-side matching and context excerpts.
 Custom typography uses [[https://fonts.google.com/specimen/Farro][Farro]] for headings and [[https://www.jetbrains.com/lp/mono/][JetBrains Mono]] for code.
 The server runs through [[https://docs.rs/tower-http][tower-http]] middleware with =gzip= compression.
 
+Posts automatically display last updated timestamps extracted from [[https://git-scm.com/][git]] commit history - a build script pulls the last commit date for each post and embeds it at compile time, only showing the updated date when it differs from the publication date.
+
 The standalone binary is deployed in an [[https://linuxcontainers.org/lxc/introduction/][LXC]] container on my [[https://www.proxmox.com/][Proxmox]]
 home server, behind a [[https://caddyserver.com/][Caddy]] reverse proxy with automatic HTTPS, and
 fronted by [[https://www.cloudflare.com/][Cloudflare]].
@@ -49,16 +51,16 @@ Claude Code also handled all the [[https://git-scm.com/][git]] stuff for me - co
 the whole thing. I didn't have to think about version control at all,
 which is a huge relief.
 
+I had a small home server I bought earlier this year but forgot how
+I'd set it up. Claude Code helped me figure out what was going on and
+get everything working again.
+
 The complete source code is available on [[https://github.com/spwx/blog][GitHub]].
 
 * Hiccups
 There were a few hiccups. Once it tried to install [[https://www.docker.com/][Docker]] in an [[https://linuxcontainers.org/lxc/introduction/][LXC]]
 container, which wasn't necessary. Just asking what it was doing set
 it back on track though.
-
-I had a small home server I bought earlier this year but forgot how
-I'd set it up. Claude Code helped me figure out what was going on and
-get everything working again.
 
 Security needed attention. When setting up port forwarding on my
 router, Claude Code didn't make sure I only opened those ports to [[https://www.cloudflare.com/][Cloudflare]],

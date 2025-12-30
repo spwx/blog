@@ -25,6 +25,8 @@ cargo install cargo-zigbuild
 brew install zig
 ```
 
+**Note:** Git is required for builds. The build script extracts last modified timestamps from git history for blog posts.
+
 ## Quick Start
 
 **Run development server** (auto-reloads on file changes):
@@ -84,6 +86,7 @@ Handles C dependencies (like `onig_sys` from syntect) without needing a Linux GC
 - Rainbow-colored org-mode headings
 - Syntax highlighting via syntect
 - Search with context excerpts
+- Automatic last updated timestamps from git history
 - Wind rose compass footer
 - SVG favicon
 
