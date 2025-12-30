@@ -3,10 +3,10 @@ run:
 
 # Deploy and run setup script on server
 setup SERVER_IP:
-    @echo "Copying setup-blog.sh to server..."
-    scp setup-blog.sh root@{{SERVER_IP}}:/root/
+    @echo "Copying server-setup.sh to server..."
+    scp server-setup.sh root@{{SERVER_IP}}:/root/
     @echo "Running setup script on server..."
-    ssh root@{{SERVER_IP}} "chmod +x /root/setup-blog.sh && /root/setup-blog.sh"
+    ssh root@{{SERVER_IP}} "chmod +x /root/server-setup.sh && /root/server-setup.sh"
     @echo "Server setup complete!"
 
 # Cross-compile and deploy to server
