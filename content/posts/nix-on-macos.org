@@ -1,0 +1,88 @@
+#+TITLE: Setting Up Nix on macOS
+#+DATE: 2025-12-30
+
+* What's Nix?
+[[https://nixos.org/][Nix]] is a declarative package manager. You declare your project's
+dependencies in a =flake.nix= file and run =nix develop=. Unlike the chaos
+of "works on my machine" development, Nix guarantees everyone gets the
+same environment. No more version conflicts, no more missing
+dependencies, no more "did you remember to install X?"
+
+It pairs nicely with [[https://github.com/nix-community/nix-direnv][nix-direnv]]. When you switch directories,
+your environment switches with you. It's honestly kind of magical.
+
+The name Nix is overloaded: it's an [[https://nixos.org/][OS]], a [[https://nixos.org/manual/nix/stable/language/][programming language]], and a
+[[https://nixos.org/download][package manager]]. Over the years, there have been multiple ways to set
+things up.
+
+This method installs the Nix package manager and uses a =flake.nix=
+file in each project's root directory. It also uses [[https://github.com/nix-community/nix-direnv][nix-direnv]] to
+automatically run =nix develop=.
+
+* Getting Nix Up
+
+Download the =.pkg= installer from [[https://docs.determinate.systems/][Determinate Systems]]. This is the
+recommended way to install Nix on [[https://www.apple.com/macos/][macOS]] because it survives system
+upgrades. The installer handles all the setup for you - no manual
+configuration needed.
+
+* Setting Up Direnv
+
+[[https://direnv.net/][Direnv]] automatically loads and unloads your environment when you
+=cd= into and out of project directories. Combined with
+[[https://github.com/nix-community/nix-direnv][nix-direnv]], it caches your Nix environments so they load instantly
+instead of rebuilding every time.
+
+First, install [[https://direnv.net/][direnv]] with [[https://brew.sh/][Homebrew]]:
+
+#+begin_src sh
+brew install direnv
+#+end_src
+
+Then install [[https://github.com/nix-community/nix-direnv][nix-direnv]] and configure it:
+
+#+begin_src sh
+nix profile add nixpkgs#nix-direnv
+mkdir -p ~/.config/direnv
+echo 'source $HOME/.nix-profile/share/nix-direnv/direnvrc' >> ~/.config/direnv/direnvrc
+#+end_src
+
+Hook [[https://direnv.net/][direnv]] into your shell. For [[https://fishshell.com/][Fish]]:
+
+#+begin_src sh
+echo 'direnv hook fish | source' >> ~/.config/fish/config.fish
+exec fish
+#+end_src
+
+For [[https://www.zsh.org/][Zsh]], add to =~/.zshrc=:
+
+#+begin_src sh
+eval "$(direnv hook zsh)"
+#+end_src
+
+Now set up your project:
+
+#+begin_src sh
+cd <YOUR PROJECT DIR>
+echo "use flake" > .envrc
+direnv allow
+#+end_src
+
+The =direnv allow= command is a security feature - it prevents random
+directories from automatically running code on your machine. You have
+to explicitly trust each =.envrc= file.
+
+* Does It Actually Work?
+
+Let's test it:
+
+#+begin_src sh
+cd ~/projects/site    # Should see "direnv: loading..." and environment activates
+which cargo           # Shows Nix cargo
+cd ~                  # Environment unloads
+cd ~/projects/site    # Loads instantly (cached!)
+#+end_src
+
+If you see the environment loading and unloading as you navigate,
+you're good to go. The second time you enter the directory should be
+nearly instant thanks to [[https://github.com/nix-community/nix-direnv][nix-direnv]] caching.
