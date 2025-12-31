@@ -39,6 +39,10 @@
 - Nix generates =flake.lock= (pins versions)
 - Commit both =flake.nix= and =flake.lock=
 
+** Updating Dependencies
+*** Update all inputs
+- =nix flake update=
+
 * What's Nix?
 [[https://nixos.org/][Nix]] is a declarative package manager. You declare your project's
 dependencies in a =flake.nix= file, and Nix builds that environment
@@ -210,6 +214,30 @@ After the first activation, Nix creates a =flake.lock= file that pins
 exact versions of all dependencies. Commit both =flake.nix= and
 =flake.lock= to version control so everyone gets identical
 environments.
+
+* Updating Dependencies
+
+The =flake.lock= file pins your dependencies to specific versions.
+When you want to upgrade to the latest versions, use =nix flake
+update=:
+
+#+begin_src sh
+nix flake update
+#+end_src
+
+This updates all inputs (=nixpkgs=, [[https://github.com/oxalica/rust-overlay][rust-overlay]], [[https://github.com/numtide/flake-utils][flake-utils]]) to their
+latest versions and regenerates =flake.lock=.
+
+To update just one input:
+
+#+begin_src sh
+nix flake update nixpkgs
+#+end_src
+
+After updating, [[https://github.com/nix-community/nix-direnv][nix-direnv]] automatically rebuilds your environment the
+next time you =cd= into the directory. Check what changed with =git
+diff flake.lock=. If something breaks, revert with =git restore
+flake.lock=.
 
 * Does It Actually Work?
 When you =cd= into a directory with a =flake.nix= and =.envrc=,
