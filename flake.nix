@@ -31,6 +31,9 @@
             # Cross-compilation tools
             zig
             cargo-zigbuild
+
+            # Version control
+            git
           ] ++ lib.optionals stdenv.isDarwin [
             # macOS SDK (provides all system frameworks)
             apple-sdk
