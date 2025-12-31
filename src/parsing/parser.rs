@@ -51,6 +51,7 @@ pub fn parse_posts() -> Result<HashMap<String, Post>> {
             .context("Failed to generate HTML from org-mode content")?;
         let html = String::from_utf8(html_bytes)
             .context("Generated HTML contains invalid UTF-8")?;
+        let toc = handler.into_toc();
 
         // Safe unwrap: 1970-01-01 is a valid date
         let pub_date = date.unwrap_or_else(|| NaiveDate::from_ymd_opt(1970, 1, 1).unwrap());
@@ -77,6 +78,7 @@ pub fn parse_posts() -> Result<HashMap<String, Post>> {
                 updated,
                 content_lower: html.to_lowercase(),
                 content: html,
+                toc,
             },
         );
     }

@@ -89,3 +89,109 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 })();
+
+// Table of Contents Toggle Functionality
+(function initTocToggle() {
+    const toc = document.querySelector('.toc');
+    const tocToggle = document.querySelector('.toc-toggle');
+    if (!toc || !tocToggle) return;
+
+    // Get saved state from localStorage
+    function getTocState() {
+        try {
+            return localStorage.getItem('toc-visible') !== 'false';
+        } catch (e) {
+            return true; // Default to visible
+        }
+    }
+
+    // Save state to localStorage
+    function saveTocState(visible) {
+        try {
+            localStorage.setItem('toc-visible', visible);
+        } catch (e) {
+            console.warn('Could not save TOC state:', e);
+        }
+    }
+
+    // Toggle TOC visibility
+    function toggleToc() {
+        const isHidden = toc.classList.contains('hidden');
+        if (isHidden) {
+            toc.classList.remove('hidden');
+            tocToggle.classList.remove('toc-hidden');
+            saveTocState(true);
+        } else {
+            toc.classList.add('hidden');
+            tocToggle.classList.add('toc-hidden');
+            saveTocState(false);
+        }
+    }
+
+    // Initialize TOC state
+    if (!getTocState()) {
+        toc.classList.add('hidden');
+        tocToggle.classList.add('toc-hidden');
+    }
+
+    // Button click handler
+    tocToggle.addEventListener('click', toggleToc);
+
+    // Keyboard shortcut (C key for Contents)
+    document.addEventListener('keydown', function(e) {
+        // Only trigger if not in an input/textarea
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        if (e.key === 'c' || e.key === 'C') {
+            e.preventDefault();
+            toggleToc();
+        }
+    });
+})();
+
+// Table of Contents Active Section Highlighting
+document.addEventListener('DOMContentLoaded', function() {
+    const tocLinks = document.querySelectorAll('.toc a');
+    if (tocLinks.length === 0) return;
+
+    // Get all headings that have IDs
+    const headings = Array.from(document.querySelectorAll('.post-content h1[id], .post-content h2[id], .post-content h3[id], .post-content h4[id], .post-content h5[id], .post-content h6[id]'));
+    if (headings.length === 0) return;
+
+    function setActiveLink() {
+        // Get current scroll position
+        const scrollPos = window.scrollY + 100; // Offset for better UX
+
+        // Find the current section
+        let currentHeading = null;
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i].offsetTop <= scrollPos) {
+                currentHeading = headings[i];
+                break;
+            }
+        }
+
+        // Remove active class from all links
+        tocLinks.forEach(link => link.classList.remove('active'));
+
+        // Add active class to current link
+        if (currentHeading) {
+            const currentLink = document.querySelector(`.toc a[href="#${currentHeading.id}"]`);
+            if (currentLink) {
+                currentLink.classList.add('active');
+            }
+        }
+    }
+
+    // Set initial active link
+    setActiveLink();
+
+    // Update on scroll with throttling for performance
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        if (scrollTimeout) {
+            window.cancelAnimationFrame(scrollTimeout);
+        }
+        scrollTimeout = window.requestAnimationFrame(setActiveLink);
+    });
+});

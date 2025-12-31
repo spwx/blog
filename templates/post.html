@@ -3,6 +3,23 @@
 {% block title %}{{ post.title }} - /dev/blog{% endblock %}
 
 {% block content %}
+{% if post.toc.len() > 0 %}
+<button class="toc-toggle" aria-label="Toggle table of contents">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>
+<nav class="toc">
+    <ul>
+        {% for item in post.toc %}
+        <li class="toc-level-{{ item.level }}">
+            <a href="#{{ item.id }}">{{ item.text }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}
+
 <article>
     <h2>{{ post.title }}</h2>
     <p class="date">
