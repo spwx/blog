@@ -745,6 +745,22 @@ article .date.updated {
     /* Hide scrollbar but keep functionality */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE/Edge */
+    /* Start invisible to prevent flash when hidden */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* Show TOC after initialization if not hidden */
+.toc.initialized:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Keep TOC invisible when explicitly hidden */
+.toc.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
 /* TOC content list */

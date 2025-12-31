@@ -134,6 +134,9 @@ document.addEventListener('DOMContentLoaded', function() {
         tocToggle.classList.add('toc-hidden');
     }
 
+    // Mark TOC as initialized to make it visible (if not hidden)
+    toc.classList.add('initialized');
+
     // Button click handler
     tocToggle.addEventListener('click', toggleToc);
 
