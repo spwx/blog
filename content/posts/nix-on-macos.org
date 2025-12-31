@@ -1,14 +1,53 @@
 #+TITLE: Setting Up Nix on macOS
 #+DATE: 2025-12-30
 
+* Quick Reference
+
+** What's [[https://nixos.org/][Nix]]?
+- Declarative package manager
+- Project dependencies declared in =flake.nix=
+- Guarantees identical environments across machines
+- [[https://github.com/nix-community/nix-direnv][nix-direnv]] enables automatic environment switching
+
+** Installation
+*** [[https://nixos.org/][Nix]] package manager
+- Download =.pkg= from [[https://docs.determinate.systems/][Determinate Systems]]
+  - This method survives [[https://www.apple.com/macos/][macOS]] system upgrades
+
+*** [[https://direnv.net/][Direnv]] + [[https://github.com/nix-community/nix-direnv][nix-direnv]]
+- Install [[https://direnv.net/][direnv]]: =brew install direnv=
+- Install [[https://github.com/nix-community/nix-direnv][nix-direnv]]: =nix profile add nixpkgs#nix-direnv=
+- Configure =~/.config/direnv/direnvrc=
+- Hook into shell
+  - [[https://fishshell.com/][Fish]]: =direnv hook fish | source=
+  - [[https://www.zsh.org/][Zsh]]: =eval "$(direnv hook zsh)"=
+- Reload shell config
+
+** Project Setup
+*** Create project directory
+- =mkdir ~/my-project && cd ~/my-project=
+
+*** Create =flake.nix=
+- Use text editor
+- Three parts: description, inputs, outputs
+- Inputs: declare external flake dependencies
+- Outputs: define what the flake provides (dev environment, packages, tools)
+
+*** Auto-activate environment
+- Create =.envrc=: =echo "use flake" > .envrc=
+- Trust directory: =direnv allow=
+- Nix generates =flake.lock= (pins versions)
+- Commit both =flake.nix= and =flake.lock=
+
 * What's Nix?
 [[https://nixos.org/][Nix]] is a declarative package manager. You declare your project's
-dependencies in a =flake.nix= file and run =nix develop=. Unlike the chaos
-of "works on my machine" development, Nix guarantees everyone gets the
-same environment. No more version conflicts, no more missing
-dependencies, no more "did you remember to install X?"
+dependencies in a =flake.nix= file, and Nix builds that environment
+with =nix develop=. Unlike the chaos of "works on my machine"
+development, Nix guarantees everyone gets the same environment. No
+more version conflicts, no more missing dependencies, no more "did you
+remember to install X?"
 
-It pairs nicely with [[https://github.com/nix-community/nix-direnv][nix-direnv]]. When you switch directories,
+Nix pairs nicely with [[https://github.com/nix-community/nix-direnv][nix-direnv]]. When you switch directories,
 your environment switches with you. It's honestly kind of magical.
 
 The name Nix is overloaded: it's an [[https://nixos.org/][OS]], a [[https://nixos.org/manual/nix/stable/language/][programming language]], and a
@@ -19,7 +58,7 @@ This method installs the Nix package manager and uses a =flake.nix=
 file in each project's root directory. It also uses [[https://github.com/nix-community/nix-direnv][nix-direnv]] to
 automatically run =nix develop=.
 
-* Getting Nix Up
+* Setting Up Nix
 
 Download the =.pkg= installer from [[https://docs.determinate.systems/][Determinate Systems]]. This is the
 recommended way to install Nix on [[https://www.apple.com/macos/][macOS]] because it survives system
@@ -51,19 +90,114 @@ Hook [[https://direnv.net/][direnv]] into your shell. For [[https://fishshell.co
 
 #+begin_src sh
 echo 'direnv hook fish | source' >> ~/.config/fish/config.fish
-exec fish
+source ~/.config/fish/config.fish
 #+end_src
 
 For [[https://www.zsh.org/][Zsh]], add to =~/.zshrc=:
 
 #+begin_src sh
-eval "$(direnv hook zsh)"
+echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
+source ~/.zshrc
 #+end_src
 
-Now set up your project:
+* Creating A Project
+
+First, navigate to your project directory, or create a new one:
 
 #+begin_src sh
-cd <YOUR PROJECT DIR>
+mkdir ~/my-project
+cd ~/my-project
+#+end_src
+
+** Creating A Flake
+
+Flakes are the modern way to configure Nix projects. They're
+self-contained files that explicitly declare all dependencies and lock
+them to specific versions, making your environment completely
+reproducible across machines and time.
+
+Create a =flake.nix= file in your project's root directory using your
+favorite text editor. Here's what the [[https://www.rust-lang.org/][Rust]] development environment
+for this blog looks like:
+
+A =flake.nix= file has three main parts: a description, inputs, and
+outputs:
+
+#+begin_src nix
+{
+  description = "Rust development environment";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
+
+  outputs = { self, nixpkgs, rust-overlay, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        overlays = [ (import rust-overlay) ];
+        pkgs = import nixpkgs {
+          inherit system overlays;
+        };
+      in
+      {
+        devShells.default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            # Rust toolchain with cross-compilation target
+            (rust-bin.stable.latest.default.override {
+              targets = [ "x86_64-unknown-linux-gnu" ];
+            })
+
+            # Rust development tools
+            cargo-nextest
+            cargo-watch
+            just
+
+            # Cross-compilation tools
+            zig
+            cargo-zigbuild
+          ] ++ lib.optionals stdenv.isDarwin [
+            # macOS SDK (provides all system frameworks)
+            apple-sdk
+          ];
+
+          # Environment variables
+          RUST_BACKTRACE = "1";
+        };
+      }
+    );
+}
+#+end_src
+
+*** Inputs
+
+Inputs are other flakes your environment depends on:
+
+- =nixpkgs= - the main package repository, like a giant catalog of software
+- [[https://github.com/oxalica/rust-overlay][rust-overlay]] - provides up-to-date [[https://www.rust-lang.org/][Rust]] toolchains
+- [[https://github.com/numtide/flake-utils][flake-utils]] - helper functions to reduce boilerplate
+
+*** Outputs
+
+Outputs define what your flake provides. This one creates a
+development shell with =devShells.default=. The =buildInputs= list
+declares exactly what tools you need:
+
+- Rust toolchain configured for cross-compilation to [[https://en.wikipedia.org/wiki/Linux][Linux]]
+- Development tools like [[https://nexte.st/][cargo-nextest]], [[https://github.com/watchexec/cargo-watch][cargo-watch]], and [[https://just.systems/][Just]]
+- Cross-compilation tools ([[https://ziglang.org/][Zig]] and [[https://github.com/rust-cross/cargo-zigbuild][cargo-zigbuild]])
+- [[https://www.apple.com/macos/][macOS]]-specific dependencies through =lib.optionals stdenv.isDarwin=
+
+The =RUST_BACKTRACE= environment variable gets set automatically when
+you enter the environment.
+
+** Activating Your Flake
+
+Now that you have a =flake.nix= file, tell [[https://direnv.net/][direnv]] to use it. In your
+project's root directory:
+
+#+begin_src sh
 echo "use flake" > .envrc
 direnv allow
 #+end_src
@@ -72,15 +206,25 @@ The =direnv allow= command is a security feature - it prevents random
 directories from automatically running code on your machine. You have
 to explicitly trust each =.envrc= file.
 
-* Does It Actually Work?
+After the first activation, Nix creates a =flake.lock= file that pins
+exact versions of all dependencies. Commit both =flake.nix= and
+=flake.lock= to version control so everyone gets identical
+environments.
 
-Let's test it:
+* Does It Actually Work?
+When you =cd= into a directory with a =flake.nix= and =.envrc=,
+[[https://github.com/nix-community/nix-direnv][nix-direnv]] builds this environment and adds all those tools to your
+=PATH=. When you leave, it removes them. Same project, same
+dependencies, every time.
+
+Let's test it. Start from your home directory:
 
 #+begin_src sh
-cd ~/projects/site    # Should see "direnv: loading..." and environment activates
-which cargo           # Shows Nix cargo
-cd ~                  # Environment unloads
-cd ~/projects/site    # Loads instantly (cached!)
+cd ~                     # Start from home
+cd ~/my-project          # Should see "direnv: loading..." and environment activates
+which cargo              # Shows Nix cargo
+cd ~                     # Environment unloads
+cd ~/my-project          # Loads instantly (cached!)
 #+end_src
 
 If you see the environment loading and unloading as you navigate,
