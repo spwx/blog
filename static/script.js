@@ -145,6 +145,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Only trigger if not in an input/textarea
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+        // Only trigger if no modifier keys are pressed (to allow Ctrl+C, Cmd+C, etc.)
+        if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+
         if (e.key === 'c' || e.key === 'C') {
             e.preventDefault();
             toggleToc();
