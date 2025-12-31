@@ -22,7 +22,6 @@
 
             # Rust development tools
             cargo-nextest
-            cargo-llvm-cov
             cargo-watch
             just
 
@@ -30,9 +29,8 @@
             zig
             cargo-zigbuild
           ] ++ lib.optionals stdenv.isDarwin [
-            # macOS-specific frameworks
-            darwin.apple_sdk.frameworks.SystemConfiguration
-            darwin.apple_sdk.frameworks.CoreServices
+            # macOS SDK (provides all system frameworks)
+            apple-sdk
           ];
 
           # Environment variables
