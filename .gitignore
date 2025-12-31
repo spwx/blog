@@ -1,2 +1,6 @@
 /target/
 Cargo.lock
+
+# Nix/direnv
+.direnv/
+.envrc
