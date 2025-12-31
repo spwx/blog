@@ -1,47 +1,34 @@
-#+TITLE: Setting Up Nix on macOS
+#+TITLE: Managing Project Dependencies With Nix On MacOS
 #+DATE: 2025-12-30
 
-* Quick Reference
+* Nix Quick Reference
+1. Install Nix using the =.pkg= from [[https://docs.determinate.systems/][Determinate Systems]].
+2. Create a =flake.nix= file in the project's root directory (see
+   below).
+3. Activate the development environment with =nix-develop=.
+4. Update dependencies with =nix flake update= as needed.
 
-** What's [[https://nixos.org/][Nix]]?
-- Declarative package manager
-- Project dependencies declared in =flake.nix=
-- Guarantees identical environments across machines
-- [[https://github.com/nix-community/nix-direnv][nix-direnv]] enables automatic environment switching
+* [[https://direnv.net/][Direnv]] & [[https://github.com/nix-community/nix-direnv][Nix-Direnv]] Quick Reference
+#+begin_src sh
+  # Install Direnv
+  brew install direnv
 
-** Installation
-*** [[https://nixos.org/][Nix]] package manager
-- Download =.pkg= from [[https://docs.determinate.systems/][Determinate Systems]]
-  - This method survives [[https://www.apple.com/macos/][macOS]] system upgrades
+  # Install nix-direnv
+  nix profile add nixpkgs#nix-direnv
 
-*** [[https://direnv.net/][Direnv]] + [[https://github.com/nix-community/nix-direnv][nix-direnv]]
-- Install [[https://direnv.net/][direnv]]: =brew install direnv=
-- Install [[https://github.com/nix-community/nix-direnv][nix-direnv]]: =nix profile add nixpkgs#nix-direnv=
-- Configure =~/.config/direnv/direnvrc=
-- Hook into shell
-  - [[https://fishshell.com/][Fish]]: =direnv hook fish | source=
-  - [[https://www.zsh.org/][Zsh]]: =eval "$(direnv hook zsh)"=
-- Reload shell config
+  # Configure ~/.config/direnv/direnvrc
+  mkdir -p ~/.config/direnv
+  echo 'source $HOME/.nix-profile/share/nix-direnv/direnvrc' >> ~/.config/direnv/direnvrc
 
-** Project Setup
-*** Create project directory
-- =mkdir ~/my-project && cd ~/my-project=
+  # Modify shell config:
+  # For Fish, add this to ~/.config/fish/config.fish
+  direnv hook fish | source
 
-*** Create =flake.nix=
-- Use text editor
-- Three parts: description, inputs, outputs
-- Inputs: declare external flake dependencies
-- Outputs: define what the flake provides (dev environment, packages, tools)
+  # For Zsh, add this to ~/.zshrc
+  eval "$(direnv hook zsh)"
 
-*** Auto-activate environment
-- Create =.envrc=: =echo "use flake" > .envrc=
-- Trust directory: =direnv allow=
-- Nix generates =flake.lock= (pins versions)
-- Commit both =flake.nix= and =flake.lock=
-
-** Updating Dependencies
-*** Update all inputs
-- =nix flake update=
+  # Reload the shell config
+#+end_src
 
 * What's Nix?
 [[https://nixos.org/][Nix]] is a declarative package manager. You declare your project's
