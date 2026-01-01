@@ -41,8 +41,9 @@ fn main() {
 
     fs::write(&dest_path, code).unwrap();
 
-    // Generate sitemap.xml
+    // Generate sitemap.xml and robots.txt
     generate_sitemap(&sitemap_entries);
+    generate_robots_txt();
 }
 
 fn get_last_modified_date(path: &Path) -> Option<String> {
@@ -69,17 +70,24 @@ fn get_last_modified_date(path: &Path) -> Option<String> {
 }
 
 fn generate_sitemap(posts: &[(String, String)]) {
-    const DOMAIN: &str = "https://wall.ninja";
+    let domain = match env::var("SITE_DOMAIN") {
+        Ok(d) => d,
+        Err(_) => {
+            println!("cargo:warning=SITE_DOMAIN not set, skipping sitemap.xml generation");
+            return;
+        }
+    };
 
-    let mut xml = String::from(
+    let mut xml = format!(
         r#"<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://wall.ninja/</loc>
+    <loc>{}/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 "#,
+        domain
     );
 
     // Add all blog posts
@@ -92,7 +100,7 @@ fn generate_sitemap(posts: &[(String, String)]) {
     <priority>0.8</priority>
   </url>
 "#,
-            DOMAIN, slug, lastmod
+            domain, slug, lastmod
         ));
     }
 
@@ -101,5 +109,24 @@ fn generate_sitemap(posts: &[(String, String)]) {
     // Write sitemap.xml to static/ folder so it gets embedded
     let sitemap_path = Path::new("static/sitemap.xml");
     fs::write(sitemap_path, xml).expect("Failed to write sitemap.xml");
-    println!("Generated sitemap.xml with {} posts", posts.len());
+    println!("Generated sitemap.xml with {} posts for domain: {}", posts.len(), domain);
+}
+
+fn generate_robots_txt() {
+    let domain = match env::var("SITE_DOMAIN") {
+        Ok(d) => d,
+        Err(_) => {
+            println!("cargo:warning=SITE_DOMAIN not set, skipping robots.txt generation");
+            return;
+        }
+    };
+
+    let robots = format!(
+        "User-agent: *\nAllow: /\n\nSitemap: {}/sitemap.xml\n",
+        domain
+    );
+
+    let robots_path = Path::new("static/robots.txt");
+    fs::write(robots_path, robots).expect("Failed to write robots.txt");
+    println!("Generated robots.txt for domain: {}", domain);
 }

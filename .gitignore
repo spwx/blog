@@ -4,3 +4,7 @@ Cargo.lock
 # Nix/direnv
 .direnv/
 .envrc
+
+# Generated at build time from SITE_DOMAIN env var
+static/sitemap.xml
+static/robots.txt
