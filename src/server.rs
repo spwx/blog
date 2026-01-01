@@ -1,4 +1,4 @@
-use crate::handlers::{index, post, search, serve_static};
+use crate::handlers::{index, not_found, post, search, serve_static};
 use crate::models::AppState;
 use crate::parsing::parse_posts;
 use anyhow::{Context, Result};
@@ -31,6 +31,7 @@ pub async fn run() -> Result<()> {
         .route("/search", get(search))
         .route("/post/{slug}", get(post))
         .route("/static/{*path}", get(serve_static))
+        .fallback(not_found)
         .with_state(state)
         .layer(CompressionLayer::new())
         .layer(GovernorLayer::new(governor_conf));
