@@ -21,3 +21,16 @@ deploy SERVER_IP:
     ssh root@{{SERVER_IP}} "systemctl start blog"
     @echo "Deployed successfully!"
     @echo "Check status: ssh root@{{SERVER_IP}} systemctl status blog"
+
+# Purge Cloudflare cache
+purge-cache:
+    @echo "Purging Cloudflare cache..."
+    @curl -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+      -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+      -H "Content-Type: application/json" \
+      --data '{"purge_everything":true}' \
+      --silent --show-error --fail | jq -r 'if .success then "✓ Cache purged successfully" else "✗ Error: " + .errors[0].message end'
+
+# Deploy and purge cache
+deploy-purge SERVER_IP: (deploy SERVER_IP) purge-cache
+    @echo "Deployment and cache purge complete!"
