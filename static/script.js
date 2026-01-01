@@ -1,13 +1,12 @@
-// Set current year in footer
+// Initialize all DOM-dependent features
 document.addEventListener('DOMContentLoaded', function() {
+    // Set current year in footer
     const yearSpan = document.getElementById('current-year');
     if (yearSpan) {
         yearSpan.textContent = new Date().getFullYear();
     }
-});
 
-// Add copy buttons to code blocks
-document.addEventListener('DOMContentLoaded', function() {
+    // Add copy buttons to code blocks
     const codeBlocks = document.querySelectorAll('.post-content pre.code');
 
     // Copy icon SVG
@@ -50,6 +49,43 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Table of Contents Active Section Highlighting
+    const tocLinks = document.querySelectorAll('.toc a');
+    if (tocLinks.length > 0) {
+        // Get all headings that have IDs
+        const headings = Array.from(document.querySelectorAll('.post-content h1[id], .post-content h2[id], .post-content h3[id], .post-content h4[id], .post-content h5[id], .post-content h6[id]'));
+
+        if (headings.length > 0) {
+            // Use IntersectionObserver for better performance than scroll events
+            const observerOptions = {
+                rootMargin: '-100px 0px -66% 0px',
+                threshold: 0
+            };
+
+            let activeHeading = null;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        activeHeading = entry.target;
+
+                        // Remove active class from all links
+                        tocLinks.forEach(link => link.classList.remove('active'));
+
+                        // Add active class to current link
+                        const currentLink = document.querySelector(`.toc a[href="#${activeHeading.id}"]`);
+                        if (currentLink) {
+                            currentLink.classList.add('active');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all headings
+            headings.forEach(heading => observer.observe(heading));
+        }
+    }
 });
 
 // Theme Toggle Functionality
@@ -155,49 +191,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 })();
 
-// Table of Contents Active Section Highlighting
-document.addEventListener('DOMContentLoaded', function() {
-    const tocLinks = document.querySelectorAll('.toc a');
-    if (tocLinks.length === 0) return;
-
-    // Get all headings that have IDs
-    const headings = Array.from(document.querySelectorAll('.post-content h1[id], .post-content h2[id], .post-content h3[id], .post-content h4[id], .post-content h5[id], .post-content h6[id]'));
-    if (headings.length === 0) return;
-
-    function setActiveLink() {
-        // Get current scroll position
-        const scrollPos = window.scrollY + 100; // Offset for better UX
-
-        // Find the current section
-        let currentHeading = null;
-        for (let i = headings.length - 1; i >= 0; i--) {
-            if (headings[i].offsetTop <= scrollPos) {
-                currentHeading = headings[i];
-                break;
-            }
-        }
-
-        // Remove active class from all links
-        tocLinks.forEach(link => link.classList.remove('active'));
-
-        // Add active class to current link
-        if (currentHeading) {
-            const currentLink = document.querySelector(`.toc a[href="#${currentHeading.id}"]`);
-            if (currentLink) {
-                currentLink.classList.add('active');
-            }
-        }
-    }
-
-    // Set initial active link
-    setActiveLink();
-
-    // Update on scroll with throttling for performance
-    let scrollTimeout;
-    window.addEventListener('scroll', function() {
-        if (scrollTimeout) {
-            window.cancelAnimationFrame(scrollTimeout);
-        }
-        scrollTimeout = window.requestAnimationFrame(setActiveLink);
-    });
-});
