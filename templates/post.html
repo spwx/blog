@@ -2,6 +2,8 @@
 
 {% block title %}{{ post.title }} - /dev/blog{% endblock %}
 
+{% block description %}{{ post.description }}{% endblock %}
+
 {% block content %}
 {% if post.toc.len() > 0 %}
 <button class="toc-toggle" aria-label="Toggle table of contents">
