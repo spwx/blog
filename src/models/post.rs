@@ -14,6 +14,7 @@ pub struct Post {
     pub title: String,
     pub date: NaiveDate,
     pub updated: String,
+    pub description: String,
     pub content: String,
     pub title_lower: String,
     pub content_lower: String,

@@ -32,6 +32,7 @@ pub fn parse_posts() -> Result<HashMap<String, Post>> {
 
         let mut title = String::new();
         let mut date = None;
+        let mut description = String::new();
 
         for event in org.iter() {
             if let Event::Start(Element::Keyword(keyword)) = event {
@@ -40,6 +41,7 @@ pub fn parse_posts() -> Result<HashMap<String, Post>> {
                     "DATE" => {
                         date = NaiveDate::parse_from_str(&keyword.value, "%Y-%m-%d").ok();
                     }
+                    "DESCRIPTION" => description = keyword.value.to_string(),
                     _ => {}
                 }
             }
@@ -76,6 +78,7 @@ pub fn parse_posts() -> Result<HashMap<String, Post>> {
                 title,
                 date: pub_date,
                 updated,
+                description,
                 content_lower: html.to_lowercase(),
                 content: html,
                 toc,
