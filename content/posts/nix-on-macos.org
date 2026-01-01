@@ -1,14 +1,14 @@
 #+TITLE: Managing Project Dependencies With Nix On MacOS
 #+DATE: 2025-12-30
 
-* Nix Quick Reference
+* Nix Quick Install
 1. Install Nix using the =.pkg= from [[https://docs.determinate.systems/][Determinate Systems]].
 2. Create a =flake.nix= file in the project's root directory (see
    below).
 3. Activate the development environment with =nix-develop=.
 4. Update dependencies with =nix flake update= as needed.
 
-* [[https://direnv.net/][Direnv]] & [[https://github.com/nix-community/nix-direnv][Nix-Direnv]] Quick Reference
+* [[https://direnv.net/][Direnv]] & [[https://github.com/nix-community/nix-direnv][Nix-Direnv]] Quick Install
 #+begin_src sh
   # Install Direnv
   brew install direnv
