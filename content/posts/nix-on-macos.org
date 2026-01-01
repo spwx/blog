@@ -1,4 +1,4 @@
-#+TITLE: Managing Project Dependencies With Nix On MacOS
+#+TITLE: Nix on MacOS
 #+DATE: 2025-12-30
 
 * Nix Quick Install
@@ -16,7 +16,7 @@
   # Install nix-direnv
   nix profile add nixpkgs#nix-direnv
 
-  # Configure ~/.config/direnv/direnvrc
+  # Configure direnv to use nix-direnv
   mkdir -p ~/.config/direnv
   echo 'source $HOME/.nix-profile/share/nix-direnv/direnvrc' >> ~/.config/direnv/direnvrc
 
