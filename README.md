@@ -62,11 +62,23 @@ Create `.org` files in `content/posts/` with frontmatter:
 ```org
 #+TITLE: Your Post Title
 #+DATE: 2025-01-20
+#+DESCRIPTION: A brief description for SEO (optional)
 
 * Your content here
 ```
 
+The `DESCRIPTION` field provides a unique meta description for search engines. If omitted, the default site description is used.
+
 See `AGENTS.md` for formatting guidelines.
+
+## Environment Variables
+
+**SITE_DOMAIN** (optional) - The domain where the blog is hosted (e.g., `example.com`). Required for generating `sitemap.xml` and `robots.txt` at build time. If not set, these SEO files will not be generated.
+
+```bash
+export SITE_DOMAIN=yourdomain.com
+cargo build --release
+```
 
 ## Deployment
 
@@ -126,6 +138,14 @@ Handles C dependencies (like `onig_sys` from syntect) without needing a Linux GC
 - Automatic last updated timestamps from git history
 - Wind rose compass footer
 - SVG favicon
+- Collapsible table of contents for long posts
+- Custom 404 page
+
+**SEO:**
+- Per-post meta descriptions via `#+DESCRIPTION` frontmatter
+- Automatic sitemap.xml generation (requires `SITE_DOMAIN`)
+- robots.txt with sitemap reference
+- Long-term caching headers for static assets
 
 **Security:**
 - **Rate limiting** - Per-IP limits (10 req/sec, burst 20) via tower_governor. Uses X-Forwarded-For headers to identify real client IPs behind Cloudflare/reverse proxies.
