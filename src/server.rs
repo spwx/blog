@@ -13,7 +13,9 @@ use tower_governor::{
 pub async fn run() -> Result<()> {
     let posts = parse_posts()
         .context("Failed to parse blog posts during startup")?;
-    let state = Arc::new(AppState { posts });
+    let site_description = std::env::var("SITE_DESCRIPTION")
+        .unwrap_or_else(|_| "A technical blog about software development, systems programming, electronics, cybersecurity, and engineering insights.".to_string());
+    let state = Arc::new(AppState { posts, site_description });
 
     // Configure rate limiter: 10 requests per second with burst of 20
     // SmartIpKeyExtractor reads X-Forwarded-For header to get real client IP behind Cloudflare
