@@ -1,5 +1,6 @@
 #+TITLE: Hello World
 #+DATE: 2025-12-28
+#+DESCRIPTION: Building a self-contained blog engine with Rust, Axum, and org-mode using Claude Code. Complete walkthrough of deployment, features, and lessons learned from AI-assisted development.
 
 * I Wanted A Blog
 I'd already been learning Rust for a while, so I spent three days

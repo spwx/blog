@@ -1,5 +1,6 @@
 #+TITLE: Nix on MacOS
 #+DATE: 2025-12-30
+#+DESCRIPTION: Step-by-step guide to setting up Nix package manager on macOS with flakes and direnv for reproducible development environments. Includes practical examples and configuration.
 
 * Nix Quick Install
 1. Install Nix using the =.pkg= from [[https://docs.determinate.systems/][Determinate Systems]].
