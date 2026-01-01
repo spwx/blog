@@ -86,6 +86,22 @@ just deploy <server-ip>
 
 This cross-compiles for Linux, copies the binary to `/opt/blog/`, and restarts the systemd service.
 
+**Deploy and Purge Cache:**
+
+```bash
+just deploy-purge <server-ip>
+```
+
+Deploys updates and purges Cloudflare cache in one command. Requires `CLOUDFLARE_ZONE_ID` and `CLOUDFLARE_API_TOKEN` environment variables.
+
+**Purge Cloudflare Cache Only:**
+
+```bash
+just purge-cache
+```
+
+Purges all cached content from Cloudflare. Requires `CLOUDFLARE_ZONE_ID` and `CLOUDFLARE_API_TOKEN` environment variables.
+
 **Why cargo-zigbuild?**
 
 Handles C dependencies (like `onig_sys` from syntect) without needing a Linux GCC toolchain on macOS.
