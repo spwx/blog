@@ -1,4 +1,4 @@
-use crate::handlers::{index, not_found, post, search, serve_static};
+use crate::handlers::{index, not_found, post, robots, search, serve_static, sitemap};
 use crate::models::AppState;
 use crate::parsing::parse_posts;
 use anyhow::{Context, Result};
@@ -30,6 +30,8 @@ pub async fn run() -> Result<()> {
         .route("/", get(index))
         .route("/search", get(search))
         .route("/post/{slug}", get(post))
+        .route("/sitemap.xml", get(sitemap))
+        .route("/robots.txt", get(robots))
         .route("/static/{*path}", get(serve_static))
         .fallback(not_found)
         .with_state(state)

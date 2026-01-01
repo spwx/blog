@@ -13,6 +13,7 @@ fn main() {
     let dest_path = Path::new(&out_dir).join("generated_metadata.rs");
 
     let mut metadata = Vec::new();
+    let mut sitemap_entries = Vec::new();
 
     // Iterate over .org files in content/posts/
     let posts_dir = Path::new("content/posts");
@@ -23,6 +24,10 @@ fn main() {
                 if let Some(filename) = path.file_name().and_then(|s| s.to_str()) {
                     if let Some(date) = get_last_modified_date(&path) {
                         metadata.push(format!("    (\"{}\", \"{}\"),", filename, date));
+
+                        // Generate slug from filename (remove .org extension)
+                        let slug = filename.trim_end_matches(".org");
+                        sitemap_entries.push((slug.to_string(), date));
                     }
                 }
             }
@@ -35,6 +40,9 @@ fn main() {
     );
 
     fs::write(&dest_path, code).unwrap();
+
+    // Generate sitemap.xml
+    generate_sitemap(&sitemap_entries);
 }
 
 fn get_last_modified_date(path: &Path) -> Option<String> {
@@ -58,4 +66,40 @@ fn get_last_modified_date(path: &Path) -> Option<String> {
     } else {
         None
     }
+}
+
+fn generate_sitemap(posts: &[(String, String)]) {
+    const DOMAIN: &str = "https://wall.ninja";
+
+    let mut xml = String::from(
+        r#"<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://wall.ninja/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+"#,
+    );
+
+    // Add all blog posts
+    for (slug, lastmod) in posts {
+        xml.push_str(&format!(
+            r#"  <url>
+    <loc>{}/post/{}</loc>
+    <lastmod>{}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+"#,
+            DOMAIN, slug, lastmod
+        ));
+    }
+
+    xml.push_str("</urlset>\n");
+
+    // Write sitemap.xml to static/ folder so it gets embedded
+    let sitemap_path = Path::new("static/sitemap.xml");
+    fs::write(sitemap_path, xml).expect("Failed to write sitemap.xml");
+    println!("Generated sitemap.xml with {} posts", posts.len());
 }
