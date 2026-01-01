@@ -19,7 +19,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/static/fonts/inter-400.ttf') format('truetype');
+  src: url('/static/fonts/inter-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -27,7 +27,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/static/fonts/inter-500.ttf') format('truetype');
+  src: url('/static/fonts/inter-500.woff2') format('woff2');
 }
 
 @font-face {
@@ -35,7 +35,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/static/fonts/inter-600.ttf') format('truetype');
+  src: url('/static/fonts/inter-600.woff2') format('woff2');
 }
 
 @font-face {
@@ -43,7 +43,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/static/fonts/farro-400.ttf') format('truetype');
+  src: url('/static/fonts/farro-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -51,7 +51,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/static/fonts/jetbrains-mono-400.ttf') format('truetype');
+  src: url('/static/fonts/jetbrains-mono-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -59,7 +59,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/static/fonts/jetbrains-mono-500.ttf') format('truetype');
+  src: url('/static/fonts/jetbrains-mono-500.woff2') format('woff2');
 }
 
 @font-face {
@@ -67,7 +67,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/static/fonts/jetbrains-mono-600.ttf') format('truetype');
+  src: url('/static/fonts/jetbrains-mono-600.woff2') format('woff2');
 }
 
 @font-face {
@@ -75,7 +75,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/static/fonts/victor-mono-400.ttf') format('truetype');
+  src: url('/static/fonts/victor-mono-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -83,7 +83,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/static/fonts/victor-mono-500.ttf') format('truetype');
+  src: url('/static/fonts/victor-mono-500.woff2') format('woff2');
 }
 
 @font-face {
@@ -91,7 +91,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/static/fonts/victor-mono-600.ttf') format('truetype');
+  src: url('/static/fonts/victor-mono-600.woff2') format('woff2');
 }
 
 /* CSS Variables for Theme Switching */
@@ -818,6 +818,8 @@ article .date.updated {
     max-height: calc(100vh - 40px);
     background-color: var(--bg-primary);
     font-size: 0.85rem;
+    /* Performance optimization: contain layout and style calculations */
+    contain: layout style;
     /* Hide scrollbar but keep functionality */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE/Edge */
@@ -954,5 +956,22 @@ article .date.updated {
 
     .toc-toggle {
         display: none;
+    }
+}
+
+/* Accessibility: Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Disable the logo flicker animation */
+    header h1 a {
+        animation: none !important;
     }
 }
