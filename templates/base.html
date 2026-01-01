@@ -8,6 +8,11 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
 
+    <!-- Preload critical fonts to reduce render blocking and network waterfall -->
+    <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/static/fonts/victor-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+
     <!-- Inline theme script to prevent FOUC -->
     <script>
     (function() {
