@@ -1,0 +1,23 @@
+# Blog Engine Configuration
+# Copy this file to site.toml and customize for your blog
+
+[site]
+# The name of your blog (appears in header and page titles)
+name = "/dev/blog"
+
+# Your blog's domain (used for sitemap.xml and robots.txt generation)
+# Optional - can also be set via SITE_DOMAIN environment variable
+domain = "https://wall.ninja"
+
+# Meta description for SEO (used in <meta> tags)
+# Can also be set via SITE_DESCRIPTION environment variable
+description = "A technical blog about software development, systems programming, and engineering"
+
+[server]
+# Address and port to bind the server to
+# Default: "127.0.0.1:3000"
+# Can also be set via BIND_ADDRESS environment variable
+bind_address = "127.0.0.1:3000"
+
+# Note: Environment variables take precedence over config file values
+# This allows you to override settings in production without changing the config file
