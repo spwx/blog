@@ -1,5 +1,5 @@
 use crate::handlers::{index, not_found, post, robots, search, serve_static, sitemap};
-use crate::models::AppState;
+use crate::models::{AppState, SiteConfig};
 use crate::parsing::parse_posts;
 use anyhow::{Context, Result};
 use axum::routing::get;
@@ -11,11 +11,13 @@ use tower_governor::{
 };
 
 pub async fn run() -> Result<()> {
+    let config = SiteConfig::load()
+        .context("Failed to load site configuration")?;
+
     let posts = parse_posts()
         .context("Failed to parse blog posts during startup")?;
-    let site_description = std::env::var("SITE_DESCRIPTION")
-        .unwrap_or_else(|_| "A technical blog about software development, systems programming, electronics, cybersecurity, and engineering insights.".to_string());
-    let state = Arc::new(AppState { posts, site_description });
+
+    let state = Arc::new(AppState { posts, config: config.clone() });
 
     // Configure rate limiter: 10 requests per second with burst of 20
     // SmartIpKeyExtractor reads X-Forwarded-For header to get real client IP behind Cloudflare
@@ -40,11 +42,13 @@ pub async fn run() -> Result<()> {
         .layer(CompressionLayer::new())
         .layer(GovernorLayer::new(governor_conf));
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+    let bind_addr = config.server.bind_address.as_str();
+    let listener = tokio::net::TcpListener::bind(bind_addr)
         .await
-        .context("Failed to bind to port 3000 - is it already in use?")?;
+        .with_context(|| format!("Failed to bind to {} - is it already in use?", bind_addr))?;
 
-    println!("Blog server running on http://127.0.0.1:3000");
+    println!("Blog server: {}", config.site.name);
+    println!("Running on: http://{}", bind_addr);
     println!("Compression: enabled (gzip)");
     println!("Rate limiting: 10 req/sec per IP, burst 20");
 

@@ -5,7 +5,7 @@ mod handlers;
 mod server;
 
 // Re-export models for public API
-pub use models::{Post, AppState, SearchQuery, SearchResult};
+pub use models::{Post, AppState, SearchQuery, SearchResult, SiteConfig};
 
 // Re-export parsing functions
 pub use parsing::parse_posts;

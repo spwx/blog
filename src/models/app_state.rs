@@ -1,7 +1,7 @@
-use super::Post;
+use super::{Post, SiteConfig};
 use std::collections::HashMap;
 
 pub struct AppState {
     pub posts: HashMap<String, Post>,
-    pub site_description: String,
+    pub config: SiteConfig,
 }
