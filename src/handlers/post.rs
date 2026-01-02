@@ -8,6 +8,7 @@ use std::sync::Arc;
 struct PostTemplate {
     post: Post,
     site_name: String,
+    default_theme: String,
 }
 
 pub async fn post(
@@ -18,6 +19,7 @@ pub async fn post(
         Some(post) => match (PostTemplate {
             post,
             site_name: state.config.site.name.clone(),
+            default_theme: state.config.site.default_theme.clone(),
         }).render() {
             Ok(html) => Html(html).into_response(),
             Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),

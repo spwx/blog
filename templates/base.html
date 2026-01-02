@@ -18,7 +18,10 @@
     <script>
     (function() {
         const stored = localStorage.getItem('theme');
-        const theme = stored || 'dark';
+        const configDefault = '{{ default_theme }}';
+        const theme = stored || (configDefault === 'system'
+            ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+            : configDefault);
         document.documentElement.setAttribute('data-theme', theme);
     })();
     </script>

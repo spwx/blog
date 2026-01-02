@@ -14,6 +14,8 @@ pub struct SiteMetadata {
     pub name: String,
     pub domain: Option<String>,
     pub description: String,
+    #[serde(default = "default_theme")]
+    pub default_theme: String,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -24,6 +26,10 @@ pub struct ServerConfig {
 
 fn default_bind_address() -> String {
     "127.0.0.1:3000".to_string()
+}
+
+fn default_theme() -> String {
+    "system".to_string()
 }
 
 impl SiteConfig {
@@ -48,6 +54,7 @@ impl SiteConfig {
                     name: "Blog".to_string(),
                     domain: None,
                     description: "A technical blog".to_string(),
+                    default_theme: default_theme(),
                 },
                 server: ServerConfig {
                     bind_address: default_bind_address(),

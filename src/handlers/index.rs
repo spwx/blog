@@ -9,6 +9,7 @@ struct IndexTemplate {
     posts: Vec<Post>,
     site_name: String,
     site_description: String,
+    default_theme: String,
 }
 
 pub async fn index(State(state): State<Arc<AppState>>) -> impl IntoResponse {
@@ -19,6 +20,7 @@ pub async fn index(State(state): State<Arc<AppState>>) -> impl IntoResponse {
         posts,
         site_name: state.config.site.name.clone(),
         site_description: state.config.site.description.clone(),
+        default_theme: state.config.site.default_theme.clone(),
     }).render() {
         Ok(html) => Html(html).into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
