@@ -1,7 +1,37 @@
 #!/bin/bash
 set -e
 
+# Configuration - can be overridden via environment variables
+DOMAIN="${DOMAIN:-wall.ninja}"
+INSTALL_DIR="${INSTALL_DIR:-/opt/blog}"
+BINARY_NAME="${BINARY_NAME:-blog-engine}"
+
+# Validate domain parameter
+if [ $# -ge 1 ]; then
+    DOMAIN="$1"
+fi
+
+if [ -z "$DOMAIN" ]; then
+    echo "Error: DOMAIN must be set or passed as first argument"
+    echo "Usage: $0 <domain> [install_dir] [binary_name]"
+    echo "   or: DOMAIN=example.com $0"
+    exit 1
+fi
+
+# Optional overrides from command line
+if [ $# -ge 2 ]; then
+    INSTALL_DIR="$2"
+fi
+
+if [ $# -ge 3 ]; then
+    BINARY_NAME="$3"
+fi
+
 echo "=== Blog Server Setup ==="
+echo "Domain: $DOMAIN"
+echo "Install directory: $INSTALL_DIR"
+echo "Binary name: $BINARY_NAME"
+echo ""
 
 # Update system
 echo "Updating system packages..."
@@ -13,11 +43,11 @@ apt-get install -y caddy openssh-server
 
 # Create blog directory
 echo "Creating blog directory..."
-mkdir -p /opt/blog
+mkdir -p "$INSTALL_DIR"
 
 # Create systemd service
 echo "Creating blog systemd service..."
-cat > /etc/systemd/system/blog.service <<'EOF'
+cat > /etc/systemd/system/blog.service <<EOF
 [Unit]
 Description=Blog Engine
 After=network.target
@@ -25,8 +55,8 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/opt/blog
-ExecStart=/opt/blog/blog-engine
+WorkingDirectory=$INSTALL_DIR
+ExecStart=$INSTALL_DIR/$BINARY_NAME
 Restart=always
 RestartSec=5
 
@@ -36,7 +66,7 @@ EOF
 
 # Create Caddyfile
 echo "Creating Caddyfile with logging configuration..."
-cat > /etc/caddy/Caddyfile <<'EOF'
+cat > /etc/caddy/Caddyfile <<EOF
 {
     log {
         output file /var/log/caddy/access.log {
@@ -47,12 +77,12 @@ cat > /etc/caddy/Caddyfile <<'EOF'
     }
 }
 
-wall.ninja {
+$DOMAIN {
     reverse_proxy localhost:3000
     encode gzip
 
     log {
-        output file /var/log/caddy/wall.ninja.log {
+        output file /var/log/caddy/$DOMAIN.log {
             roll_size 100mb
             roll_keep 5
             roll_keep_for 720h
@@ -60,8 +90,8 @@ wall.ninja {
     }
 }
 
-www.wall.ninja {
-    redir https://wall.ninja{uri} permanent
+www.$DOMAIN {
+    redir https://$DOMAIN{uri} permanent
 }
 EOF
 
