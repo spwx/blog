@@ -2,6 +2,9 @@ use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::fs;
 
+// Include the embedded config generated at build time
+include!(concat!(env!("OUT_DIR"), "/embedded_config.rs"));
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct SiteConfig {
     pub site: SiteMetadata,
@@ -46,15 +49,19 @@ impl SiteConfig {
 
     /// Load configuration from file or use defaults with environment variable overrides
     pub fn load() -> Result<Self> {
-        // Try to load from site.toml, fall back to defaults
+        // Try to load from site.toml, fall back to embedded build-time config
         let config = Self::from_file("site.toml").unwrap_or_else(|_| {
-            eprintln!("Warning: site.toml not found, using defaults and environment variables");
+            eprintln!("Warning: site.toml not found, using embedded build-time configuration");
             SiteConfig {
                 site: SiteMetadata {
-                    name: "Blog".to_string(),
-                    domain: None,
-                    description: "A technical blog".to_string(),
-                    default_theme: default_theme(),
+                    name: embedded_config::SITE_NAME.to_string(),
+                    domain: if embedded_config::SITE_DOMAIN.is_empty() {
+                        None
+                    } else {
+                        Some(embedded_config::SITE_DOMAIN.to_string())
+                    },
+                    description: embedded_config::SITE_DESCRIPTION.to_string(),
+                    default_theme: embedded_config::DEFAULT_THEME.to_string(),
                 },
                 server: ServerConfig {
                     bind_address: default_bind_address(),

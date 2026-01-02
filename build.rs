@@ -4,10 +4,11 @@ use std::path::Path;
 use std::process::Command;
 
 fn main() {
-    // Tell Cargo to rerun if git history or posts change
+    // Tell Cargo to rerun if git history, posts, or config change
     println!("cargo:rerun-if-changed=.git/HEAD");
     println!("cargo:rerun-if-changed=.git/refs");
     println!("cargo:rerun-if-changed=content/posts");
+    println!("cargo:rerun-if-changed=site.toml");
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("generated_metadata.rs");
@@ -40,6 +41,9 @@ fn main() {
     );
 
     fs::write(&dest_path, code).unwrap();
+
+    // Generate embedded site config
+    generate_embedded_config(&out_dir);
 
     // Generate sitemap.xml and robots.txt
     generate_sitemap(&sitemap_entries);
@@ -129,4 +133,74 @@ fn generate_robots_txt() {
     let robots_path = Path::new("static/robots.txt");
     fs::write(robots_path, robots).expect("Failed to write robots.txt");
     println!("Generated robots.txt for domain: {}", domain);
+}
+
+fn generate_embedded_config(out_dir: &str) {
+    // Read site.toml at build time
+    let config_path = Path::new("site.toml");
+
+    let (site_name, site_domain, site_description, default_theme) = if config_path.exists() {
+        let content = fs::read_to_string(config_path)
+            .expect("Failed to read site.toml");
+
+        // Parse the TOML manually to avoid adding toml as a build dependency
+        let mut name = String::from("Blog");
+        let mut domain = String::new();
+        let mut description = String::from("A technical blog");
+        let mut theme = String::from("system");
+
+        for line in content.lines() {
+            let line = line.trim();
+            if line.starts_with("name = ") {
+                name = line.strip_prefix("name = ")
+                    .unwrap_or("Blog")
+                    .trim_matches('"')
+                    .to_string();
+            } else if line.starts_with("domain = ") {
+                domain = line.strip_prefix("domain = ")
+                    .unwrap_or("")
+                    .trim_matches('"')
+                    .to_string();
+            } else if line.starts_with("description = ") {
+                description = line.strip_prefix("description = ")
+                    .unwrap_or("A technical blog")
+                    .trim_matches('"')
+                    .to_string();
+            } else if line.starts_with("default_theme = ") {
+                theme = line.strip_prefix("default_theme = ")
+                    .unwrap_or("system")
+                    .trim_matches('"')
+                    .to_string();
+            }
+        }
+
+        println!("Embedded site config from site.toml: name='{}', domain='{}', theme='{}'", name, domain, theme);
+        (name, domain, description, theme)
+    } else {
+        println!("cargo:warning=site.toml not found, using default embedded config");
+        (
+            String::from("Blog"),
+            String::new(),
+            String::from("A technical blog"),
+            String::from("system")
+        )
+    };
+
+    // Generate Rust code with the embedded config
+    let code = format!(
+        r#"pub mod embedded_config {{
+    pub const SITE_NAME: &str = "{}";
+    pub const SITE_DOMAIN: &str = "{}";
+    pub const SITE_DESCRIPTION: &str = "{}";
+    pub const DEFAULT_THEME: &str = "{}";
+}}
+"#,
+        site_name.replace('"', r#"\""#),
+        site_domain.replace('"', r#"\""#),
+        site_description.replace('"', r#"\""#),
+        default_theme.replace('"', r#"\""#)
+    );
+
+    let config_dest = Path::new(out_dir).join("embedded_config.rs");
+    fs::write(&config_dest, code).expect("Failed to write embedded_config.rs");
 }
