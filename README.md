@@ -40,6 +40,7 @@ The blog engine can be configured via `site.toml` in the project root:
 name = "/dev/blog"                    # Blog name (appears in header and titles)
 domain = "https://wall.ninja"          # Domain for sitemap generation (optional)
 description = "Your blog description"  # Meta description for SEO
+default_theme = "dark"                 # Default theme: "dark", "light", or "system" (optional, defaults to "system")
 
 [server]
 bind_address = "127.0.0.1:3000"       # Server bind address
@@ -158,8 +159,9 @@ Handles C dependencies (like `onig_sys` from syntect) without needing a Linux GC
 
 **Theme:** ef-maris (dark/light) by [Protesilaos Stavrou](https://protesilaos.com/emacs/ef-themes)
 - Marine-inspired color palette
-- Theme toggle respects system preference
-- Preference persisted in localStorage
+- Configurable default theme (dark/light/system) via `default_theme` in site.toml
+- Theme toggle button for manual switching
+- User preference persisted in localStorage
 
 **Typography:**
 - Body: [Inter](https://fonts.google.com/specimen/Inter)
