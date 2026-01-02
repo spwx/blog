@@ -31,6 +31,37 @@ brew install zig
 
 **Note:** Git is required for builds. The build script extracts last modified timestamps from git history for blog posts.
 
+## Configuration
+
+The blog engine can be configured via `site.toml` in the project root:
+
+```toml
+[site]
+name = "/dev/blog"                    # Blog name (appears in header and titles)
+domain = "https://wall.ninja"          # Domain for sitemap generation (optional)
+description = "Your blog description"  # Meta description for SEO
+
+[server]
+bind_address = "127.0.0.1:3000"       # Server bind address
+```
+
+**Environment Variable Overrides:**
+
+Environment variables take precedence over `site.toml`:
+
+- `SITE_NAME` - Override blog name
+- `SITE_DOMAIN` - Override domain
+- `SITE_DESCRIPTION` - Override meta description
+- `BIND_ADDRESS` - Override server bind address
+
+**Example:**
+```bash
+cp site.toml.example site.toml
+# Edit site.toml with your settings
+```
+
+If `site.toml` is not found, the engine uses sensible defaults.
+
 ## Quick Start
 
 **Run development server** (auto-reloads on file changes):
@@ -71,32 +102,37 @@ The `DESCRIPTION` field provides a unique meta description for search engines. I
 
 See `AGENTS.md` for formatting guidelines.
 
-## Environment Variables
-
-**SITE_DOMAIN** (optional) - The domain where the blog is hosted (e.g., `example.com`). Required for generating `sitemap.xml` and `robots.txt` at build time. If not set, these SEO files will not be generated.
-
-```bash
-export SITE_DOMAIN=yourdomain.com
-cargo build --release
-```
-
 ## Deployment
 
 **Initial Server Setup:**
 
 ```bash
+# Using defaults from site.toml
 just setup <server-ip>
+
+# Or specify custom values
+just setup <server-ip> example.com /opt/myblog myblog-engine
 ```
 
-This copies `setup-blog.sh` to the server and runs it. The script installs Caddy (reverse proxy with automatic HTTPS) and configures the systemd services.
+This copies `server-setup.sh` to the server and runs it. The script installs Caddy (reverse proxy with automatic HTTPS) and configures the systemd services.
+
+Parameters:
+- `server-ip` - The IP address of your server (required)
+- `domain` - Domain name for Caddy configuration (default: from site.toml or "wall.ninja")
+- `install-dir` - Installation directory (default: "/opt/blog")
+- `binary-name` - Name of the binary (default: "blog-engine")
 
 **Deploy Updates:**
 
 ```bash
+# Using defaults
 just deploy <server-ip>
+
+# Or specify custom paths
+just deploy <server-ip> /opt/myblog myblog-engine
 ```
 
-This cross-compiles for Linux, copies the binary to `/opt/blog/`, and restarts the systemd service.
+This cross-compiles for Linux, copies the binary to the install directory, and restarts the systemd service.
 
 **Deploy and Purge Cache:**
 
