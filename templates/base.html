@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{% block description %}{{ site_description }}{% endblock %}">
-    <title>{% block title %}/dev/blog{% endblock %}</title>
+    <title>{% block title %}{{ site_name }}{% endblock %}</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
@@ -27,7 +27,7 @@
 </head>
 <body>
     <header>
-        <h1><a href="/">/dev/blog</a></h1>
+        <h1><a href="/">{{ site_name }}</a></h1>
         <div class="header-controls">
             <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
                 <svg class="sun-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
