@@ -7,6 +7,7 @@ use std::sync::Arc;
 #[template(path = "post.html")]
 struct PostTemplate {
     post: Post,
+    site_name: String,
 }
 
 pub async fn post(
@@ -14,7 +15,10 @@ pub async fn post(
     Path(slug): Path<String>,
 ) -> impl IntoResponse {
     match state.posts.get(&slug).cloned() {
-        Some(post) => match (PostTemplate { post }).render() {
+        Some(post) => match (PostTemplate {
+            post,
+            site_name: state.config.site.name.clone(),
+        }).render() {
             Ok(html) => Html(html).into_response(),
             Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
         },

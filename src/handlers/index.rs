@@ -7,6 +7,7 @@ use std::sync::Arc;
 #[template(path = "index.html")]
 struct IndexTemplate {
     posts: Vec<Post>,
+    site_name: String,
     site_description: String,
 }
 
@@ -16,7 +17,8 @@ pub async fn index(State(state): State<Arc<AppState>>) -> impl IntoResponse {
 
     match (IndexTemplate {
         posts,
-        site_description: state.site_description.clone(),
+        site_name: state.config.site.name.clone(),
+        site_description: state.config.site.description.clone(),
     }).render() {
         Ok(html) => Html(html).into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),

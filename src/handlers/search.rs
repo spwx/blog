@@ -10,6 +10,7 @@ use tokio::time::timeout;
 struct SearchTemplate {
     query: String,
     results: Vec<SearchResult>,
+    site_name: String,
     site_description: String,
 }
 
@@ -71,7 +72,8 @@ pub async fn search(
     match (SearchTemplate {
         query,
         results,
-        site_description: state.site_description.clone(),
+        site_name: state.config.site.name.clone(),
+        site_description: state.config.site.description.clone(),
     }).render() {
         Ok(html) => Html(html).into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
