@@ -203,6 +203,7 @@ body, header, footer, .post-list li, .post-content a, .copy-button,
 
 html {
     font-size: 20px;
+    background-color: var(--bg-primary);
 }
 
 body {
@@ -210,7 +211,7 @@ body {
     font-size: 1rem;
     line-height: 1.6;
     color: var(--fg-primary);
-    background-color: var(--bg-primary);
+    background-color: transparent;
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
@@ -816,7 +817,7 @@ article .date.updated {
     transform: translateY(-50%);
     width: 220px;
     max-height: calc(100vh - 40px);
-    background-color: var(--bg-primary);
+    background-color: transparent;
     font-size: 0.85rem;
     /* Performance optimization: contain layout and style calculations */
     contain: layout style;
