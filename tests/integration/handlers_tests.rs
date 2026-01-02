@@ -1,13 +1,14 @@
 use axum::{routing::get, Router};
 use axum::http::StatusCode;
 use axum_test::TestServer;
-use blog_engine::{index, post, search, serve_static, parse_posts, AppState};
+use blog_engine::{index, post, search, serve_static, parse_posts, AppState, SiteConfig};
 use std::sync::Arc;
 
 // Helper function to create test server
 async fn create_test_server() -> TestServer {
     let posts = parse_posts().expect("Should parse posts");
-    let state = Arc::new(AppState { posts });
+    let config = SiteConfig::load().expect("Should load config");
+    let state = Arc::new(AppState { posts, config });
 
     let app = Router::new()
         .route("/", get(index))
