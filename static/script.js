@@ -138,6 +138,21 @@ document.addEventListener('DOMContentLoaded', function() {
     backdrop.className = 'toc-backdrop';
     document.body.appendChild(backdrop);
 
+    // Icon SVGs
+    const listIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="3" x2="14" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="5" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="5" y1="13" x2="14" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="2" cy="3" r="1" fill="currentColor"/>
+        <circle cx="2" cy="8" r="1" fill="currentColor"/>
+        <circle cx="2" cy="13" r="1" fill="currentColor"/>
+    </svg>`;
+
+    const closeIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="3" y1="3" x2="13" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="13" y1="3" x2="3" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>`;
+
     // Check if mobile view
     function isMobile() {
         return window.matchMedia('(max-width: 1200px)').matches;
@@ -163,12 +178,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Open TOC
     function openToc() {
-        toc.classList.remove('hidden');
-        tocToggle.classList.remove('toc-hidden');
         if (isMobile()) {
             backdrop.classList.add('visible');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            tocToggle.innerHTML = closeIcon;
         }
+        toc.classList.remove('hidden');
+        tocToggle.classList.remove('toc-hidden');
         saveTocState(true);
     }
 
@@ -178,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
         tocToggle.classList.add('toc-hidden');
         if (isMobile()) {
             backdrop.classList.remove('visible');
-            document.body.style.overflow = ''; // Restore scrolling
+            tocToggle.innerHTML = listIcon;
         }
         saveTocState(false);
     }
@@ -197,6 +212,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!getTocState()) {
         toc.classList.add('hidden');
         tocToggle.classList.add('toc-hidden');
+    } else {
+        // If TOC is open on mobile, show close icon
+        if (isMobile()) {
+            tocToggle.innerHTML = closeIcon;
+        }
     }
 
     // Mark TOC as initialized to make it visible (if not hidden)
@@ -240,14 +260,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle window resize - clean up backdrop if switching from mobile to desktop
+    // Handle window resize - clean up backdrop and icon if switching from mobile to desktop
     let resizeTimer;
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
             if (!isMobile()) {
                 backdrop.classList.remove('visible');
-                document.body.style.overflow = '';
+                tocToggle.innerHTML = listIcon;
+            } else {
+                // Switched to mobile - update icon based on TOC state
+                const isHidden = toc.classList.contains('hidden');
+                tocToggle.innerHTML = isHidden ? listIcon : closeIcon;
             }
         }, 250);
     });
