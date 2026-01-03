@@ -333,6 +333,18 @@ header h1 a:hover {
     transform: scale(0.95);
 }
 
+.about-link svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    transition: transform var(--transition-base);
+}
+
+.about-link:hover svg,
+.about-link:focus-visible svg {
+    transform: scaleX(-1);
+}
+
 /* About link tooltip */
 .about-link::after {
     content: attr(data-tooltip);
@@ -832,6 +844,7 @@ article .date.updated {
         padding: 0.3rem;
     }
 
+    .about-link svg,
     .theme-toggle svg,
     .rss-link svg {
         width: 18px;
