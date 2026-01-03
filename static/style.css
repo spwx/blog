@@ -501,8 +501,10 @@ article .date.updated {
     z-index: 1001;
 }
 
-.copy-button:hover::after {
-    opacity: 1;
+@media (hover: hover) {
+    .copy-button:hover::after {
+        opacity: 1;
+    }
 }
 
 .post-content code {
@@ -671,10 +673,12 @@ article .date.updated {
     z-index: 1001;
 }
 
-.theme-toggle:hover::after,
-.rss-link:hover::after,
-.header-search-button:hover::after {
-    opacity: 1;
+@media (hover: hover) {
+    .theme-toggle:hover::after,
+    .rss-link:hover::after,
+    .header-search-button:hover::after {
+        opacity: 1;
+    }
 }
 
 /* Icon visibility based on theme */
@@ -1004,8 +1008,10 @@ article .date.updated {
     z-index: 1001;
 }
 
-.toc-toggle:hover::after {
-    opacity: 1;
+@media (hover: hover) {
+    .toc-toggle:hover::after {
+        opacity: 1;
+    }
 }
 
 /* Hide scrollbar for Chrome/Safari */
