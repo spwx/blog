@@ -10,6 +10,10 @@ use std::collections::HashMap;
 #[folder = "content/posts/"]
 struct Posts;
 
+#[derive(RustEmbed)]
+#[folder = "content/"]
+struct AboutContent;
+
 // Include generated metadata from build.rs
 include!(concat!(env!("OUT_DIR"), "/generated_metadata.rs"));
 
@@ -87,4 +91,22 @@ pub fn parse_posts() -> Result<HashMap<String, Post>> {
     }
 
     Ok(posts)
+}
+
+pub fn parse_about() -> Result<String> {
+    let content = AboutContent::get("about.org")
+        .context("Failed to load embedded about.org file")?;
+    let text = std::str::from_utf8(content.data.as_ref())
+        .context("about.org file contains invalid UTF-8")?;
+
+    let org = Org::parse(text);
+
+    let mut handler = SyntectHandler::default();
+    let mut html_bytes = Vec::new();
+    org.write_html_custom(&mut html_bytes, &mut handler)
+        .context("Failed to generate HTML from about.org content")?;
+    let html = String::from_utf8(html_bytes)
+        .context("Generated HTML contains invalid UTF-8")?;
+
+    Ok(html)
 }

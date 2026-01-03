@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ site_name }} - About{% endblock %}
+
+{% block description %}About {{ site_name }}{% endblock %}
+
+{% block content %}
+<article>
+    <div class="post-content">
+        {{ content|safe }}
+    </div>
+
+    <a href="/" class="back-link">&larr; Back to Posts</a>
+</article>
+{% endblock %}

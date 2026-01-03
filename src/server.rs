@@ -1,6 +1,6 @@
-use crate::handlers::{index, not_found, post, robots, rss, search, serve_static, sitemap};
+use crate::handlers::{about, index, not_found, post, robots, rss, search, serve_static, sitemap};
 use crate::models::{AppState, SiteConfig};
-use crate::parsing::parse_posts;
+use crate::parsing::{parse_about, parse_posts};
 use anyhow::{Context, Result};
 use axum::routing::get;
 use axum::Router;
@@ -17,7 +17,10 @@ pub async fn run() -> Result<()> {
     let posts = parse_posts()
         .context("Failed to parse blog posts during startup")?;
 
-    let state = Arc::new(AppState { posts, config: config.clone() });
+    let about_content = parse_about()
+        .context("Failed to parse about page during startup")?;
+
+    let state = Arc::new(AppState { posts, about_content, config: config.clone() });
 
     // Configure rate limiter: 10 requests per second with burst of 20
     // SmartIpKeyExtractor reads X-Forwarded-For header to get real client IP behind Cloudflare
@@ -32,6 +35,7 @@ pub async fn run() -> Result<()> {
 
     let app = Router::new()
         .route("/", get(index))
+        .route("/about", get(about))
         .route("/search", get(search))
         .route("/post/{slug}", get(post))
         .route("/rss.xml", get(rss))

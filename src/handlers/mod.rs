@@ -1,3 +1,4 @@
+mod about;
 mod index;
 mod not_found;
 mod post;
@@ -6,6 +7,7 @@ mod search;
 mod sitemap;
 mod static_files;
 
+pub use about::about;
 pub use index::index;
 pub use not_found::not_found;
 pub use post::post;
