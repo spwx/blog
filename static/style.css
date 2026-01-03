@@ -586,6 +586,37 @@ article .date.updated {
     height: 20px;
 }
 
+/* RSS Link */
+.rss-link {
+    background: none;
+    border: 2px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg-secondary);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.rss-link:hover {
+    color: var(--color-link);
+    border-color: var(--color-link);
+    transform: scale(1.05);
+}
+
+.rss-link:active {
+    transform: scale(0.95);
+}
+
+.rss-link svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
 /* Icon visibility based on theme */
 [data-theme="dark"] .moon-icon,
 [data-theme="light"] .sun-icon {
@@ -627,11 +658,13 @@ article .date.updated {
 }
 
 @media (max-width: 600px) {
-    .theme-toggle {
+    .theme-toggle,
+    .rss-link {
         padding: 6px;
     }
 
-    .theme-toggle svg {
+    .theme-toggle svg,
+    .rss-link svg {
         width: 18px;
         height: 18px;
     }
