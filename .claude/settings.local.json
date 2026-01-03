@@ -12,7 +12,9 @@
       "Bash(cat:*)",
       "Bash(head:*)",
       "Bash(cargo nextest run:*)",
-      "mcp__exa__get_code_context_exa"
+      "mcp__exa__get_code_context_exa",
+      "Bash(kill:*)",
+      "Bash(pkill:*)"
     ]
   },
   "enabledMcpjsonServers": [
