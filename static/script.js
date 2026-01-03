@@ -161,9 +161,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get saved state from localStorage
     function getTocState() {
         try {
-            return localStorage.getItem('toc-visible') !== 'false';
+            const saved = localStorage.getItem('toc-visible');
+            if (saved !== null) {
+                return saved !== 'false';
+            }
+            // Default: visible on desktop, hidden on mobile
+            return !isMobile();
         } catch (e) {
-            return true; // Default to visible
+            return !isMobile(); // Default: visible on desktop, hidden on mobile
         }
     }
 
