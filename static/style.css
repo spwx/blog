@@ -224,6 +224,7 @@ body, header, footer, .post-list li, .post-content a, .copy-button,
 html {
     font-size: 20px;
     background-color: var(--bg-primary);
+    scrollbar-gutter: stable;
 }
 
 body {
@@ -256,7 +257,7 @@ header {
 header h1 {
     font-family: 'Farro', sans-serif;
     font-weight: 400;
-    font-size: 2.5rem;
+    font-size: 2rem;
 }
 
 header h1 a {
@@ -298,6 +299,65 @@ header h1 a:hover {
         0 0 25px color-mix(in srgb, var(--logo-color) 80%, transparent),
         0 0 35px color-mix(in srgb, var(--logo-color) 60%, transparent),
         0 0 50px color-mix(in srgb, var(--logo-color) 40%, transparent);
+}
+
+.about-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--fg-secondary);
+    background: none;
+    border: 2px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 0.4rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-base);
+    position: relative;
+}
+
+.about-link:hover {
+    color: var(--color-link);
+    border-color: var(--color-link);
+    transform: scale(1.05);
+}
+
+.about-link:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+}
+
+.about-link:active {
+    transform: scale(0.95);
+}
+
+/* About link tooltip */
+.about-link::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0.4rem;
+    padding: 0.2rem 0.4rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 3px;
+    color: var(--fg-primary);
+    font-size: 0.65rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+    z-index: var(--z-tooltip);
+}
+
+@media (hover: hover) {
+    .about-link:hover::after {
+        opacity: 1;
+    }
 }
 
 main {
@@ -737,7 +797,7 @@ article .date.updated {
     }
 
     header h1 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         flex: 1 0 100%;
         margin-bottom: 0.6rem;
         text-align: center;
@@ -745,6 +805,11 @@ article .date.updated {
 
     header h1 a {
         display: block;
+    }
+
+    .about-link {
+        padding: 0.3rem;
+        font-size: 0.8rem;
     }
 
     .header-controls {
