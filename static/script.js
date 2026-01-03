@@ -133,6 +133,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const tocToggle = document.querySelector('.toc-toggle');
     if (!toc || !tocToggle) return;
 
+    // Create backdrop element
+    const backdrop = document.createElement('div');
+    backdrop.className = 'toc-backdrop';
+    document.body.appendChild(backdrop);
+
+    // Check if mobile view
+    function isMobile() {
+        return window.matchMedia('(max-width: 1200px)').matches;
+    }
+
     // Get saved state from localStorage
     function getTocState() {
         try {
@@ -151,17 +161,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Open TOC
+    function openToc() {
+        toc.classList.remove('hidden');
+        tocToggle.classList.remove('toc-hidden');
+        if (isMobile()) {
+            backdrop.classList.add('visible');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+        saveTocState(true);
+    }
+
+    // Close TOC
+    function closeToc() {
+        toc.classList.add('hidden');
+        tocToggle.classList.add('toc-hidden');
+        if (isMobile()) {
+            backdrop.classList.remove('visible');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+        saveTocState(false);
+    }
+
     // Toggle TOC visibility
     function toggleToc() {
         const isHidden = toc.classList.contains('hidden');
         if (isHidden) {
-            toc.classList.remove('hidden');
-            tocToggle.classList.remove('toc-hidden');
-            saveTocState(true);
+            openToc();
         } else {
-            toc.classList.add('hidden');
-            tocToggle.classList.add('toc-hidden');
-            saveTocState(false);
+            closeToc();
         }
     }
 
@@ -177,18 +205,51 @@ document.addEventListener('DOMContentLoaded', function() {
     // Button click handler
     tocToggle.addEventListener('click', toggleToc);
 
-    // Keyboard shortcut (C key for Contents)
+    // Backdrop click handler - close TOC
+    backdrop.addEventListener('click', closeToc);
+
+    // Close TOC when clicking a link (mobile only)
+    const tocLinks = toc.querySelectorAll('a');
+    tocLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (isMobile()) {
+                closeToc();
+            }
+        });
+    });
+
+    // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
         // Only trigger if not in an input/textarea
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+        // Escape key - close TOC
+        if (e.key === 'Escape' && !toc.classList.contains('hidden')) {
+            e.preventDefault();
+            closeToc();
+            return;
+        }
+
         // Only trigger if no modifier keys are pressed (to allow Ctrl+C, Cmd+C, etc.)
         if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
 
+        // C key - toggle TOC
         if (e.key === 'c' || e.key === 'C') {
             e.preventDefault();
             toggleToc();
         }
+    });
+
+    // Handle window resize - clean up backdrop if switching from mobile to desktop
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            if (!isMobile()) {
+                backdrop.classList.remove('visible');
+                document.body.style.overflow = '';
+            }
+        }, 250);
     });
 })();
 

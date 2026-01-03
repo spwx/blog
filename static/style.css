@@ -191,7 +191,7 @@
 
 /* Smooth transitions for theme switching */
 body, header, footer, .post-list li, .post-content a, .copy-button,
-.post-content table thead, .post-content table tbody tr {
+.post-content table thead, .post-content table tbody tr, .toc-backdrop {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -1068,13 +1068,105 @@ article .date.updated {
     padding-left: 50px;
 }
 
-/* Responsive layout - hide TOC on smaller screens */
+/* TOC Backdrop for mobile modal */
+.toc-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.toc-backdrop.visible {
+    display: block;
+    opacity: 1;
+}
+
+/* Mobile TOC - Modal/Overlay Layout */
 @media (max-width: 1200px) {
     .toc {
-        display: none;
+        /* Reset desktop positioning */
+        position: fixed;
+        right: auto;
+        top: auto;
+        transform: none;
+
+        /* Mobile modal positioning */
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(0.95);
+        width: calc(100% - 40px);
+        max-width: 400px;
+        max-height: 70vh;
+
+        /* Modal styling */
+        background-color: var(--bg-secondary);
+        border: 2px solid var(--border-primary);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+        /* Above backdrop */
+        z-index: 1000;
+
+        /* Animation */
+        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
     }
 
+    .toc.hidden {
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    .toc ul {
+        max-height: calc(70vh - 80px);
+        padding-right: 10px;
+    }
+
+    /* Mobile toggle button positioning and styling */
     .toc-toggle {
+        /* Reset desktop positioning */
+        left: auto;
+        top: auto;
+        transform: none;
+
+        /* Mobile positioning - bottom right corner */
+        right: 20px;
+        bottom: 20px;
+
+        /* Match search button styling */
+        width: 48px;
+        height: 48px;
+        padding: 12px;
+        border-radius: 6px;
+        background-color: var(--bg-secondary);
+        color: var(--fg-secondary);
+        border: 2px solid var(--border-primary);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.2s ease;
+    }
+
+    .toc-toggle:hover {
+        background-color: var(--color-link);
+        color: var(--bg-primary);
+        border-color: var(--color-link);
+    }
+
+    .toc-toggle:active {
+        transform: scale(0.95);
+    }
+
+    .toc-toggle svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Hide tooltip on mobile (FAB is self-explanatory) */
+    .toc-toggle::after {
         display: none;
     }
 }
