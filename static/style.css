@@ -1157,7 +1157,8 @@ article .date.updated {
     }
 
     .toc-toggle:active {
-        transform: scale(0.95);
+        /* No transform on mobile to prevent position jumping */
+        opacity: 0.8;
     }
 
     .toc-toggle svg {
