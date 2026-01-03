@@ -1,8 +1,31 @@
 #!/bin/bash
 set -e
 
+# Extract domain and redirect_domains from site.toml if available
+TOML_DOMAIN=""
+REDIRECT_DOMAINS=()
+if [ -f "site.toml" ]; then
+    # Extract domain line, remove https:// and quotes
+    TOML_DOMAIN=$(grep '^domain = ' site.toml | sed 's/domain = "//;s/"//;s|https://||;s|http://||')
+
+    # Extract redirect_domains array
+    if grep -q '^redirect_domains = ' site.toml; then
+        # Extract the array contents, remove brackets and quotes, split by comma
+        REDIRECT_LINE=$(grep '^redirect_domains = ' site.toml | sed 's/redirect_domains = \[//;s/\]//')
+        while IFS=',' read -ra DOMAINS; do
+            for domain in "${DOMAINS[@]}"; do
+                # Trim whitespace and quotes
+                domain=$(echo "$domain" | sed 's/^[[:space:]]*"//;s/"[[:space:]]*$//')
+                if [ -n "$domain" ]; then
+                    REDIRECT_DOMAINS+=("$domain")
+                fi
+            done
+        done <<< "$REDIRECT_LINE"
+    fi
+fi
+
 # Configuration - can be overridden via environment variables
-DOMAIN="${DOMAIN:-wall.ninja}"
+DOMAIN="${DOMAIN:-${TOML_DOMAIN}}"
 INSTALL_DIR="${INSTALL_DIR:-/opt/blog}"
 BINARY_NAME="${BINARY_NAME:-blog-engine}"
 
@@ -12,9 +35,10 @@ if [ $# -ge 1 ]; then
 fi
 
 if [ -z "$DOMAIN" ]; then
-    echo "Error: DOMAIN must be set or passed as first argument"
-    echo "Usage: $0 <domain> [install_dir] [binary_name]"
-    echo "   or: DOMAIN=example.com $0"
+    echo "Error: DOMAIN must be set via one of:"
+    echo "  1. site.toml (domain field)"
+    echo "  2. Command line: $0 <domain> [install_dir] [binary_name]"
+    echo "  3. Environment: DOMAIN=example.com $0"
     exit 1
 fi
 
@@ -89,11 +113,17 @@ $DOMAIN {
         }
     }
 }
+EOF
 
-www.$DOMAIN {
+# Add redirect blocks for each redirect domain
+for redirect_domain in "${REDIRECT_DOMAINS[@]}"; do
+    cat >> /etc/caddy/Caddyfile <<EOF
+
+$redirect_domain {
     redir https://$DOMAIN{uri} permanent
 }
 EOF
+done
 
 # Enable and restart services to pick up config changes
 echo "Reloading systemd configuration..."
