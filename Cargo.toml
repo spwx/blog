@@ -20,6 +20,7 @@ regex = "1.10"
 html-escape = "0.2"
 tower_governor = { version = "0.8", features = ["axum"] }
 anyhow = "1.0"
+rss = "2.0.12"
 
 [dev-dependencies]
 pretty_assertions = "1.4"
