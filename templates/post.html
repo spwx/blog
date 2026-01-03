@@ -6,9 +6,14 @@
 
 {% block content %}
 {% if post.toc.len() > 0 %}
-<button class="toc-toggle" aria-label="Toggle table of contents">
+<button class="toc-toggle" aria-label="Toggle table of contents" data-tooltip="Table of Contents">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="5" y1="3" x2="14" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="5" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="5" y1="13" x2="14" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="2" cy="3" r="1" fill="currentColor"/>
+        <circle cx="2" cy="8" r="1" fill="currentColor"/>
+        <circle cx="2" cy="13" r="1" fill="currentColor"/>
     </svg>
 </button>
 <nav class="toc">

@@ -480,6 +480,31 @@ article .date.updated {
     opacity: 1;
 }
 
+/* Copy Button Tooltip */
+.copy-button::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 8px;
+    padding: 4px 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 3px;
+    color: var(--fg-primary);
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 1001;
+}
+
+.copy-button:hover::after {
+    opacity: 1;
+}
+
 .post-content code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 1rem;
@@ -615,6 +640,41 @@ article .date.updated {
     display: block;
     width: 20px;
     height: 20px;
+}
+
+/* Header Controls Tooltips */
+.theme-toggle,
+.rss-link,
+.header-search-button {
+    position: relative;
+}
+
+.theme-toggle::after,
+.rss-link::after,
+.header-search-button::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    padding: 4px 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 3px;
+    color: var(--fg-primary);
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 1001;
+}
+
+.theme-toggle:hover::after,
+.rss-link:hover::after,
+.header-search-button:hover::after {
+    opacity: 1;
 }
 
 /* Icon visibility based on theme */
@@ -921,11 +981,31 @@ article .date.updated {
 
 .toc-toggle svg {
     display: block;
-    transition: transform 0.3s ease;
 }
 
-.toc-toggle.toc-hidden svg {
-    transform: rotate(180deg);
+/* TOC Toggle Tooltip */
+.toc-toggle::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 8px;
+    padding: 4px 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 3px;
+    color: var(--fg-primary);
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 1001;
+}
+
+.toc-toggle:hover::after {
+    opacity: 1;
 }
 
 /* Hide scrollbar for Chrome/Safari */

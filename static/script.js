@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         copyButton.className = 'copy-button';
         copyButton.innerHTML = copyIconSVG;
         copyButton.setAttribute('aria-label', 'Copy code to clipboard');
+        copyButton.setAttribute('data-tooltip', 'Copy');
 
         // Wrap the code block
         codeBlock.parentNode.insertBefore(wrapper, codeBlock);
