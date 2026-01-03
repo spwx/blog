@@ -37,10 +37,11 @@ The blog engine can be configured via `site.toml` in the project root:
 
 ```toml
 [site]
-name = "/dev/blog"                    # Blog name (appears in header and titles)
-domain = "https://wall.ninja"          # Domain for sitemap generation (optional)
-description = "Your blog description"  # Meta description for SEO
-default_theme = "dark"                 # Default theme: "dark", "light", or "system" (optional, defaults to "system")
+name = "/dev/blog"                                      # Blog name (appears in header and titles)
+domain = "https://wall.ninja"                            # Domain for sitemap and RSS generation (optional)
+redirect_domains = ["example.com", "www.example.com"]   # Domains to redirect to main domain (optional)
+description = "Your blog description"                    # Meta description for SEO
+default_theme = "dark"                                   # Default theme: "dark", "light", or "system" (optional, defaults to "system")
 
 [server]
 bind_address = "127.0.0.1:3000"       # Server bind address
@@ -176,14 +177,17 @@ Handles C dependencies (like `onig_sys` from syntect) without needing a Linux GC
 - Automatic last updated timestamps from git history
 - Wind rose compass footer
 - SVG favicon
-- Collapsible table of contents for long posts
+- Collapsible table of contents for long posts (mobile modal with backdrop on small screens)
 - Custom 404 page
+- RSS feed at /rss.xml
 
 **SEO:**
 - Per-post meta descriptions via `#+DESCRIPTION` frontmatter
-- Automatic sitemap.xml generation (requires `SITE_DOMAIN`)
+- Automatic sitemap.xml generation (requires domain in site.toml)
+- RSS feed with full content (/rss.xml)
 - robots.txt with sitemap reference
 - Long-term caching headers for static assets
+- Domain redirect support for canonicalization
 
 **Security:**
 - **Rate limiting** - Per-IP limits (10 req/sec, burst 20) via tower_governor. Uses X-Forwarded-For headers to identify real client IPs behind Cloudflare/reverse proxies.
