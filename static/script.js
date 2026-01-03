@@ -1,3 +1,64 @@
+// Helper function to create SVG elements
+function createSVGElement(tag, attributes) {
+    const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, value] of Object.entries(attributes)) {
+        element.setAttribute(key, value);
+    }
+    return element;
+}
+
+// Create copy icon SVG
+function createCopyIcon() {
+    const svg = createSVGElement('svg', {
+        width: '16',
+        height: '16',
+        viewBox: '0 0 16 16',
+        fill: 'none'
+    });
+
+    const rect = createSVGElement('rect', {
+        x: '5',
+        y: '5',
+        width: '9',
+        height: '9',
+        rx: '1',
+        stroke: 'currentColor',
+        'stroke-width': '1.5'
+    });
+
+    const path = createSVGElement('path', {
+        d: 'M3 10.5V3C3 2.44772 3.44772 2 4 2H10.5',
+        stroke: 'currentColor',
+        'stroke-width': '1.5',
+        'stroke-linecap': 'round'
+    });
+
+    svg.appendChild(rect);
+    svg.appendChild(path);
+    return svg;
+}
+
+// Create checkmark icon SVG
+function createCheckIcon() {
+    const svg = createSVGElement('svg', {
+        width: '16',
+        height: '16',
+        viewBox: '0 0 16 16',
+        fill: 'none'
+    });
+
+    const path = createSVGElement('path', {
+        d: 'M3 8L6.5 11.5L13 4',
+        stroke: 'currentColor',
+        'stroke-width': '2',
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round'
+    });
+
+    svg.appendChild(path);
+    return svg;
+}
+
 // Initialize all DOM-dependent features
 document.addEventListener('DOMContentLoaded', function() {
     // Set current year in footer
@@ -9,12 +70,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add copy buttons to code blocks
     const codeBlocks = document.querySelectorAll('.post-content pre.code');
 
-    // Copy icon SVG
-    const copyIconSVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M3 10.5V3C3 2.44772 3.44772 2 4 2H10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
-
-    // Checkmark icon SVG for success state
-    const checkIconSVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8L6.5 11.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
     codeBlocks.forEach(function(codeBlock) {
         // Create wrapper div
         const wrapper = document.createElement('div');
@@ -23,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create copy button
         const copyButton = document.createElement('button');
         copyButton.className = 'copy-button';
-        copyButton.innerHTML = copyIconSVG;
+        copyButton.appendChild(createCopyIcon());
         copyButton.setAttribute('aria-label', 'Copy code to clipboard');
         copyButton.setAttribute('data-tooltip', 'Copy');
 
@@ -37,13 +92,42 @@ document.addEventListener('DOMContentLoaded', function() {
             const code = codeBlock.querySelector('code');
             const text = code ? code.textContent : codeBlock.textContent;
 
-            navigator.clipboard.writeText(text).then(function() {
-                copyButton.innerHTML = checkIconSVG;
+            // Clipboard API with fallback
+            function copyToClipboard(text) {
+                if (navigator.clipboard) {
+                    return navigator.clipboard.writeText(text);
+                } else {
+                    // Fallback for older browsers
+                    return new Promise(function(resolve, reject) {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = text;
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        try {
+                            document.execCommand('copy');
+                            document.body.removeChild(textarea);
+                            resolve();
+                        } catch (err) {
+                            document.body.removeChild(textarea);
+                            reject(err);
+                        }
+                    });
+                }
+            }
+
+            copyToClipboard(text).then(function() {
+                copyButton.textContent = '';
+                copyButton.appendChild(createCheckIcon());
                 copyButton.classList.add('copied');
+                copyButton.setAttribute('aria-label', 'Copied to clipboard');
 
                 setTimeout(function() {
-                    copyButton.innerHTML = copyIconSVG;
+                    copyButton.textContent = '';
+                    copyButton.appendChild(createCopyIcon());
                     copyButton.classList.remove('copied');
+                    copyButton.setAttribute('aria-label', 'Copy code to clipboard');
                 }, 2000);
             }).catch(function(err) {
                 console.error('Failed to copy:', err);
@@ -75,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         tocLinks.forEach(link => link.classList.remove('active'));
 
                         // Add active class to current link
-                        const currentLink = document.querySelector(`.toc a[href="#${activeHeading.id}"]`);
+                        const currentLink = document.querySelector(`.toc a[href="#${CSS.escape(activeHeading.id)}"]`);
                         if (currentLink) {
                             currentLink.classList.add('active');
                         }
@@ -120,12 +204,98 @@ document.addEventListener('DOMContentLoaded', function() {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
         mediaQuery.addEventListener('change', (e) => {
             // Only auto-switch if user hasn't manually set a preference
-            if (!localStorage.getItem('theme')) {
-                setTheme(e.matches ? 'light' : 'dark');
+            try {
+                if (!localStorage.getItem('theme')) {
+                    setTheme(e.matches ? 'light' : 'dark');
+                }
+            } catch (err) {
+                // localStorage not available, skip auto-switch
             }
         });
     }
 })();
+
+// Create list icon SVG
+function createListIcon() {
+    const svg = createSVGElement('svg', {
+        width: '16',
+        height: '16',
+        viewBox: '0 0 16 16',
+        fill: 'none'
+    });
+
+    const line1 = createSVGElement('line', {
+        x1: '5', y1: '3', x2: '14', y2: '3',
+        stroke: 'currentColor',
+        'stroke-width': '2',
+        'stroke-linecap': 'round'
+    });
+
+    const line2 = createSVGElement('line', {
+        x1: '5', y1: '8', x2: '14', y2: '8',
+        stroke: 'currentColor',
+        'stroke-width': '2',
+        'stroke-linecap': 'round'
+    });
+
+    const line3 = createSVGElement('line', {
+        x1: '5', y1: '13', x2: '14', y2: '13',
+        stroke: 'currentColor',
+        'stroke-width': '2',
+        'stroke-linecap': 'round'
+    });
+
+    const circle1 = createSVGElement('circle', {
+        cx: '2', cy: '3', r: '1',
+        fill: 'currentColor'
+    });
+
+    const circle2 = createSVGElement('circle', {
+        cx: '2', cy: '8', r: '1',
+        fill: 'currentColor'
+    });
+
+    const circle3 = createSVGElement('circle', {
+        cx: '2', cy: '13', r: '1',
+        fill: 'currentColor'
+    });
+
+    svg.appendChild(line1);
+    svg.appendChild(line2);
+    svg.appendChild(line3);
+    svg.appendChild(circle1);
+    svg.appendChild(circle2);
+    svg.appendChild(circle3);
+    return svg;
+}
+
+// Create close icon SVG
+function createCloseIcon() {
+    const svg = createSVGElement('svg', {
+        width: '16',
+        height: '16',
+        viewBox: '0 0 16 16',
+        fill: 'none'
+    });
+
+    const line1 = createSVGElement('line', {
+        x1: '3', y1: '3', x2: '13', y2: '13',
+        stroke: 'currentColor',
+        'stroke-width': '2',
+        'stroke-linecap': 'round'
+    });
+
+    const line2 = createSVGElement('line', {
+        x1: '13', y1: '3', x2: '3', y2: '13',
+        stroke: 'currentColor',
+        'stroke-width': '2',
+        'stroke-linecap': 'round'
+    });
+
+    svg.appendChild(line1);
+    svg.appendChild(line2);
+    return svg;
+}
 
 // Table of Contents Toggle Functionality
 (function initTocToggle() {
@@ -137,21 +307,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const backdrop = document.createElement('div');
     backdrop.className = 'toc-backdrop';
     document.body.appendChild(backdrop);
-
-    // Icon SVGs
-    const listIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <line x1="5" y1="3" x2="14" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <line x1="5" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <line x1="5" y1="13" x2="14" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="2" cy="3" r="1" fill="currentColor"/>
-        <circle cx="2" cy="8" r="1" fill="currentColor"/>
-        <circle cx="2" cy="13" r="1" fill="currentColor"/>
-    </svg>`;
-
-    const closeIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <line x1="3" y1="3" x2="13" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <line x1="13" y1="3" x2="3" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>`;
 
     // Check if mobile view
     function isMobile() {
@@ -185,7 +340,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function openToc() {
         if (isMobile()) {
             backdrop.classList.add('visible');
-            tocToggle.innerHTML = closeIcon;
+            tocToggle.textContent = '';
+            tocToggle.appendChild(createCloseIcon());
         }
         toc.classList.remove('hidden');
         tocToggle.classList.remove('toc-hidden');
@@ -198,7 +354,8 @@ document.addEventListener('DOMContentLoaded', function() {
         tocToggle.classList.add('toc-hidden');
         if (isMobile()) {
             backdrop.classList.remove('visible');
-            tocToggle.innerHTML = listIcon;
+            tocToggle.textContent = '';
+            tocToggle.appendChild(createListIcon());
         }
         saveTocState(false);
     }
@@ -217,10 +374,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!getTocState()) {
         toc.classList.add('hidden');
         tocToggle.classList.add('toc-hidden');
+        if (isMobile()) {
+            tocToggle.appendChild(createListIcon());
+        }
     } else {
         // If TOC is open on mobile, show close icon
         if (isMobile()) {
-            tocToggle.innerHTML = closeIcon;
+            tocToggle.appendChild(createCloseIcon());
         }
     }
 
@@ -245,8 +405,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
-        // Only trigger if not in an input/textarea
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        // Only trigger if not in an input/textarea/contenteditable
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
 
         // Escape key - close TOC
         if (e.key === 'Escape' && !toc.classList.contains('hidden')) {
@@ -272,11 +432,13 @@ document.addEventListener('DOMContentLoaded', function() {
         resizeTimer = setTimeout(function() {
             if (!isMobile()) {
                 backdrop.classList.remove('visible');
-                tocToggle.innerHTML = listIcon;
+                tocToggle.textContent = '';
+                tocToggle.appendChild(createListIcon());
             } else {
                 // Switched to mobile - update icon based on TOC state
                 const isHidden = toc.classList.contains('hidden');
-                tocToggle.innerHTML = isHidden ? listIcon : closeIcon;
+                tocToggle.textContent = '';
+                tocToggle.appendChild(isHidden ? createListIcon() : createCloseIcon());
             }
         }, 250);
     });
