@@ -7,10 +7,9 @@ Amazonian problem-solver. I spent 23 years in the [[https://www.uscg.mil/][U.S. 
 of those as an Electronics Technician, chasing down faults in Fire
 Control, Radar, Communication, and Navigation systems aboard 270-foot
 cutters. Nine years underway earned me the title of "salty Cutterman,"
-along with an advanced degree in fixing things that absolutely
-shouldn't be fixable. I even did a stint on the remote island of St.
-Paul Island, Alaska, keeping [[https://en.wikipedia.org/wiki/LORAN][LORAN]] navigation alive with little more
-than solder and stubbornness.
+along with an advanced degree in problem solving. I even did a stint on
+the remote island of St. Paul Island, Alaska, keeping [[https://en.wikipedia.org/wiki/LORAN][LORAN]] navigation
+alive with little more than solder and stubbornness.
 
 When I finally came ashore, I spent the next five years racking up 20
 cyber security certifications (including [[https://www.isc2.org/Certifications/CISSP][CISSP]] and [[https://www.offensive-security.com/pwk-oscp/][OSCP]]), helped stand
@@ -20,14 +19,14 @@ the federal government. I proudly retired as a Chief and immediately
 grew a Gandalf-level beard to mark the occasion.
 
 I joined [[https://aws.amazon.com/][Amazon]] in 2023, where I've become known for tackling some
-of the most complex cases with detailed precision and just enough
-sarcasm to keep things interesting. I'm a rare D.C. native, an
-unapologetic [[https://www.rust-lang.org/][Rust]] advocate, and an enthusiastic teacher.
+complex cases with detailed precision and just enough sarcasm to keep
+things interesting. I'm a rare D.C. native, an unapologetic [[https://www.rust-lang.org/][Rust]]
+advocate, and an enthusiastic teacher. My current obsessions are
+diving back into hobby electronics, struggling through [[https://mathacademy.com/][MathAcademy]],
+and wasting lots of LLM tokens.
 
-When not deep in code or solving problems of volcanic proportions, I
-spend my time with my three amazing kids and my incredibly patient,
-brilliant wife — who has weathered both deployments and the beard era
-with equal grace.
+When I'm not laying on the couch with my laptop, I spend my time with
+my three amazing kids and my incredibly patient, brilliant wife - who
+has weathered both deployments and the beard era with equal grace.
 
-I'm not big on social media, by try to check my [[https://www.linkedin.com/in/sean-wall-1b5b22126][LinkedIn]] every month
-or so.
+I'm not big on social media, but you can catch me on [[https://www.linkedin.com/in/sean-wall-1b5b22126][LinkedIn]].
