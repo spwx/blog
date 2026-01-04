@@ -1,17 +1,33 @@
 #+TITLE: About Me
 
-* Who Am I?
+* Hello, World!
 
-Welcome to my blog! This is a placeholder for your about page.
+I have lived several lives - Coast Guardsman, cyber defender, and now
+Amazonian problem-solver. I spent 23 years in the [[https://www.uscg.mil/][U.S. Coast Guard]], 17
+of those as an Electronics Technician, chasing down faults in Fire
+Control, Radar, Communication, and Navigation systems aboard 270-foot
+cutters. Nine years underway earned me the title of "salty Cutterman,"
+along with an advanced degree in fixing things that absolutely
+shouldn't be fixable. I even did a stint on the remote island of St.
+Paul Island, Alaska, keeping [[https://en.wikipedia.org/wiki/LORAN][LORAN]] navigation alive with little more
+than solder and stubbornness.
 
-Add your bio here. Tell your readers about yourself, your background,
-and what drives your passion for the topics you write about.
+When I finally came ashore, I spent the next five years racking up 20
+cyber security certifications (including [[https://www.isc2.org/Certifications/CISSP][CISSP]] and [[https://www.offensive-security.com/pwk-oscp/][OSCP]]), helped stand
+up Cyber Command at [[https://www.uscg.mil/][USCG]] Headquarters, and, as a Senior Analyst at
+[[https://www.cisa.gov/][CISA]], created an interactive [[https://www.linux.org/][Linux]] course that's still shared across
+the federal government. I proudly retired as a Chief and immediately
+grew a Gandalf-level beard to mark the occasion.
 
-* What Is This Blog About?
+I joined [[https://aws.amazon.com/][Amazon]] in 2023, where I've become known for tackling some
+of the most complex cases with detailed precision and just enough
+sarcasm to keep things interesting. I'm a rare D.C. native, an
+unapologetic [[https://www.rust-lang.org/][Rust]] advocate, and an enthusiastic teacher.
 
-Describe the purpose of your blog, the topics you cover, and what
-readers can expect from your content.
+When not deep in code or solving problems of volcanic proportions, I
+spend my time with my three amazing kids and my incredibly patient,
+brilliant wife — who has weathered both deployments and the beard era
+with equal grace.
 
-* Get In Touch
-
-Add your contact information or social media links here.
+I'm not big on social media, by try to check my [[https://www.linkedin.com/in/sean-wall-1b5b22126][LinkedIn]] every month
+or so.
