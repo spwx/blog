@@ -359,6 +359,7 @@ header h1 a:hover {
     border-radius: 3px;
     color: var(--fg-primary);
     font-size: 0.65rem;
+    line-height: 1;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -598,6 +599,7 @@ article .date.updated {
     border-radius: 3px;
     color: var(--fg-primary);
     font-size: 0.65rem;
+    line-height: 1;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -780,6 +782,7 @@ article .date.updated {
     border-radius: 3px;
     color: var(--fg-primary);
     font-size: 0.65rem;
+    line-height: 1;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -1134,6 +1137,7 @@ article .date.updated {
     border-radius: 3px;
     color: var(--fg-primary);
     font-size: 0.65rem;
+    line-height: 1;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
